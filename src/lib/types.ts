@@ -1,4 +1,4 @@
-export type MenuCategory = 'Appetizers' | 'Entrees' | 'Desserts';
+export type MenuCategory = 'Appetizers' | 'Soups' | 'Pastas & Spaghetti' | 'Breads' | 'Curries' | 'Rice' | 'Drinks' | 'Desserts' | 'Coffee';
 
 export interface MenuItem {
   id: number;

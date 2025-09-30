@@ -78,7 +78,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
                       />
                       <div>
                         <p className="font-medium">{item.name}</p>
-                        <p className="text-sm text-muted-foreground">${item.price.toFixed(2)}</p>
+                        <p className="text-sm text-muted-foreground">₹{item.price.toFixed(2)}</p>
                         <div className="flex items-center gap-2 pt-2">
                           <Button variant="outline" size="icon" className="h-7 w-7" onClick={() => updateQuantity(item.id, item.quantity - 1)}>
                             <Minus className="h-4 w-4" />
@@ -91,7 +91,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
                       </div>
                     </div>
                     <div className="flex flex-col items-end gap-2">
-                       <p className="font-semibold">${(item.price * item.quantity).toFixed(2)}</p>
+                       <p className="font-semibold">₹{(item.price * item.quantity).toFixed(2)}</p>
                        <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-destructive" onClick={() => updateQuantity(item.id, 0)}>
                           <Trash2 className="h-4 w-4" />
                        </Button>
@@ -104,7 +104,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
               <div className="w-full space-y-4">
                 <div className="flex justify-between font-bold text-xl">
                   <span>Total</span>
-                  <span>${totalPrice.toFixed(2)}</span>
+                  <span>₹{totalPrice.toFixed(2)}</span>
                 </div>
                  <AlertDialog>
                   <AlertDialogTrigger asChild>

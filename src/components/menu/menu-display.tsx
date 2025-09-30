@@ -1,7 +1,7 @@
 'use client';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import type { MenuItem } from '@/lib/types';
+import type { MenuItem, MenuCategory } from '@/lib/types';
 import { MenuItemCard } from './menu-item-card';
 
 interface MenuDisplayProps {
@@ -9,11 +9,11 @@ interface MenuDisplayProps {
 }
 
 export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
-  const categories = ['Appetizers', 'Entrees', 'Desserts'] as const;
+  const categories: MenuCategory[] = ['Appetizers', 'Soups', 'Pastas & Spaghetti', 'Breads', 'Curries', 'Rice', 'Drinks', 'Desserts', 'Coffee'];
 
   return (
     <Tabs defaultValue="Appetizers" className="w-full">
-      <TabsList className="grid w-full grid-cols-3 max-w-md mx-auto h-12">
+      <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 lg:grid-cols-9 max-w-6xl mx-auto h-auto min-h-12">
         {categories.map(category => (
           <TabsTrigger key={category} value={category} className="text-base h-10">
             {category}

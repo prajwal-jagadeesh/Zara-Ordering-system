@@ -34,7 +34,7 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
       </CardContent>
       <CardFooter className="flex items-center justify-between">
         <p className="text-xl font-semibold text-foreground">
-          ${item.price.toFixed(2)}
+          ₹{item.price.toFixed(2)}
         </p>
         <Button onClick={() => addToCart(item)}>
           <PlusCircle className="mr-2 h-5 w-5" />
