@@ -9,7 +9,7 @@ interface MenuDisplayProps {
 }
 
 export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
-  const categories: MenuCategory[] = ['Appetizers', 'Soups', 'Pastas & Spaghetti', 'Breads', 'Curries', 'Rice', 'Drinks', 'Desserts', 'Coffee'];
+  const categories: MenuCategory[] = ['Appetizers', 'Soulful Soups', 'Pastas & Spaghetti', 'Artisan Breads', 'Signature Curries', 'Heritage Rice Bowls', 'sip sesh', 'Sweets Endings', 'Coffee Clasics'];
 
   return (
     <Tabs defaultValue="Appetizers" className="w-full">

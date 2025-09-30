@@ -1,4 +1,4 @@
-export type MenuCategory = 'Appetizers' | 'Soups' | 'Pastas & Spaghetti' | 'Breads' | 'Curries' | 'Rice' | 'Drinks' | 'Desserts' | 'Coffee';
+export type MenuCategory = 'Appetizers' | 'Soulful Soups' | 'Pastas & Spaghetti' | 'Artisan Breads' | 'Signature Curries' | 'Heritage Rice Bowls' | 'sip sesh' | 'Sweets Endings' | 'Coffee Clasics';
 
 export interface MenuItem {
   id: number;
@@ -6,9 +6,6 @@ export interface MenuItem {
   description: string;
   price: number;
   category: MenuCategory;
-  imageId: string;
-  imageUrl: string;
-  imageHint: string;
 }
 
 export interface CartItem extends MenuItem {

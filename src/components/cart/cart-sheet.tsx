@@ -25,7 +25,6 @@ import { useCart } from './cart-context';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Minus, Plus, Trash2, Loader2, ShoppingCart } from 'lucide-react';
-import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
 import React from 'react';
 
@@ -68,14 +67,6 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
                 {cartItems.map(item => (
                   <div key={item.id} className="flex items-start justify-between space-x-4">
                     <div className="flex items-center space-x-4">
-                      <Image
-                        src={item.imageUrl}
-                        alt={item.name}
-                        width={64}
-                        height={64}
-                        className="rounded-md object-cover"
-                        data-ai-hint={item.imageHint}
-                      />
                       <div>
                         <p className="font-medium">{item.name}</p>
                         <p className="text-sm text-muted-foreground">₹{item.price.toFixed(2)}</p>

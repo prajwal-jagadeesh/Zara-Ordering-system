@@ -1,17 +1,11 @@
 import { menuData } from '@/lib/menu-data';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import type { MenuItem } from '@/lib/types';
 import MenuDisplay from '@/components/menu/menu-display';
 
 async function getMenuItems(): Promise<MenuItem[]> {
-  const imageMap = new Map(PlaceHolderImages.map(img => [img.id, img]));
-  
   return menuData.map(item => {
-    const imageData = imageMap.get(item.imageId);
     return {
       ...item,
-      imageUrl: imageData?.imageUrl || 'https://picsum.photos/seed/default/600/400',
-      imageHint: imageData?.imageHint || 'food plate',
     };
   });
 }
