@@ -9,17 +9,6 @@ import {
   SheetDescription,
   SheetClose,
 } from '@/components/ui/sheet';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
 import { Button } from '@/components/ui/button';
 import { useCart } from './cart-context';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -34,7 +23,7 @@ interface CartSheetProps {
 }
 
 export function CartSheet({ open, onOpenChange }: CartSheetProps) {
-  const { cartItems, updateQuantity, totalPrice, clearCart } = useCart();
+  const { cartItems, updateQuantity, totalPrice } = useCart();
   const { toast } = useToast();
   const [isPlacingOrder, setIsPlacingOrder] = React.useState(false);
 
@@ -44,7 +33,7 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
     setTimeout(() => {
       setIsPlacingOrder(false);
       onOpenChange(false); // Close the sheet
-      clearCart();
+      // The cart is no longer cleared here to allow for additional orders.
       toast({
         title: "Order Placed! 🎉",
         description: "Your order has been sent to the kitchen. It will be ready shortly.",
@@ -97,29 +86,13 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
                   <span>Total</span>
                   <span>₹{totalPrice.toFixed(2)}</span>
                 </div>
-                 <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button size="lg" className="w-full h-12 text-lg" disabled={isPlacingOrder}>
-                       {isPlacingOrder ? (
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      ) : (
-                        "Place Order"
-                      )}
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Confirm Your Order</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This will send your order directly to the kitchen. Are you sure you want to proceed?
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={handlePlaceOrder}>Confirm</AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <Button size="lg" className="w-full h-12 text-lg" disabled={isPlacingOrder} onClick={handlePlaceOrder}>
+                    {isPlacingOrder ? (
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  ) : (
+                    "Place Order"
+                  )}
+                </Button>
               </div>
             </SheetFooter>
           </>
