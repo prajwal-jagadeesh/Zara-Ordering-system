@@ -1,13 +1,12 @@
 'use client';
 
 import type { CartItem, MenuItem } from '@/lib/types';
-import { useToast } from '@/hooks/use-toast';
 import React, { createContext, useContext, useState, useMemo } from 'react';
 
 interface CartContextType {
   cartItems: CartItem[];
   orderedItems: CartItem[];
-  addToCart: (item: MenuItem) => void;
+  addToCart: (item: MenuItem, quantity?: number) => void;
   updateQuantity: (itemId: number, quantity: number) => void;
   removeFromCart: (itemId: number) => void;
   placeOrder: () => void;
@@ -15,6 +14,9 @@ interface CartContextType {
   totalItems: number;
   totalPrice: number;
   isCartAnimating: boolean;
+  isCartOpen: boolean;
+  setIsCartOpen: (isOpen: boolean) => void;
+  getItemQuantity: (itemId: number) => number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -23,28 +25,17 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [orderedItems, setOrderedItems] = useState<CartItem[]>([]);
   const [isCartAnimating, setIsCartAnimating] = useState(false);
-  const { toast } = useToast();
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const addToCart = (item: MenuItem) => {
-    // Check if item is already in ordered list
-    const inOrdered = orderedItems.find(i => i.id === item.id);
-    if(inOrdered) {
-        toast({
-            variant: 'destructive',
-            title: "Item Already Ordered",
-            description: "You can't add more of an item that's already been sent to the kitchen.",
-        });
-        return;
-    }
-
+  const addToCart = (item: MenuItem, quantity: number = 1) => {
     setCartItems(prevItems => {
       const existingItem = prevItems.find(i => i.id === item.id);
       if (existingItem) {
         return prevItems.map(i =>
-          i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+          i.id === item.id ? { ...i, quantity: i.quantity + quantity } : i
         );
       }
-      return [...prevItems, { ...item, quantity: 1 }];
+      return [...prevItems, { ...item, quantity }];
     });
     
     setIsCartAnimating(true);
@@ -85,18 +76,22 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setCartItems([]);
     setOrderedItems([]);
   };
+  
+  const getItemQuantity = (itemId: number) => {
+    const cartItem = cartItems.find(i => i.id === itemId);
+    const orderedItem = orderedItems.find(i => i.id === itemId);
+    return (cartItem?.quantity || 0) + (orderedItem?.quantity || 0);
+  };
+
+  const allItems = useMemo(() => [...cartItems, ...orderedItems], [cartItems, orderedItems]);
 
   const totalItems = useMemo(() => {
-    const cartTotal = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-    const orderedTotal = orderedItems.reduce((sum, item) => sum + item.quantity, 0);
-    return cartTotal + orderedTotal;
-  }, [cartItems, orderedItems]);
+    return allItems.reduce((sum, item) => sum + item.quantity, 0);
+  }, [allItems]);
 
   const totalPrice = useMemo(() => {
-    const cartTotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const orderedTotal = orderedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    return cartTotal + orderedTotal;
-  }, [cartItems, orderedItems]);
+    return allItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  }, [allItems]);
 
   const value = {
     cartItems,
@@ -109,6 +104,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     totalItems,
     totalPrice,
     isCartAnimating,
+    isCartOpen,
+    setIsCartOpen,
+    getItemQuantity,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

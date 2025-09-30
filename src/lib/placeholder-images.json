@@ -1,267 +1,223 @@
 {
   "placeholderImages": [
     {
-      "id": "paneer-crisps",
-      "description": "Golden-fried paneer snacks",
-      "imageUrl": "https://images.unsplash.com/photo-1741448682476-55786f461576?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwYW5lZXIlMjBzbmFja3xlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "paneer snack"
+      "id": "butterfly-paneer-crisps",
+      "imageUrl": "https://images.unsplash.com/photo-1671827817356-6ea2285c85b6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwYW5lZXIlMjBjcmlzcHxlbnwwfHx8fDE3NTkyNDIzODF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "paneer crisp"
     },
     {
-      "id": "baby-corn",
-      "description": "Spicy baby corn appetizer",
-      "imageUrl": "https://images.unsplash.com/photo-1756220072755-7163d1c177b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxiYWJ5JTIwY29ybnxlbnwwfHx8fDE3NTkyNDA3Mzh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "dragon-fire-baby-corn",
+      "imageUrl": "https://images.unsplash.com/photo-1627785097692-c98adf1acd20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxiYWJ5JTIwY29ybnxlbnwwfHx8fDE3NTkyNDA3Mzh8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "baby corn"
     },
     {
-      "id": "pepper-baby-corn",
-      "description": "Pepper-crusted baby corn",
-      "imageUrl": "https://images.unsplash.com/photo-1604697977281-044124f37fbe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwZXBwZXIlMjBjb3JufGVufDB8fHx8MTc1OTI0MDczN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "pepper-babycorn-crunch",
+      "imageUrl": "https://images.unsplash.com/photo-1649952052743-5e8f37c348c5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwZXBwZXIlMjBjb3JufGVufDB8fHx8MTc1OTI0MDczN3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "pepper corn"
     },
     {
-      "id": "garden-rolls",
-      "description": "Fresh Vietnamese spring rolls",
-      "imageUrl": "https://images.unsplash.com/photo-1560162071-da4c4a91077a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzcHJpbmclMjByb2xsc3xlbnwwfHx8fDE3NTkyMTUwNzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "spring rolls"
+      "id": "vietnamese-garden-rolls",
+      "imageUrl": "https://images.unsplash.com/photo-1606525437679-037aca74a3e9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxzcHJpbmclMjByb2xsfGVufDB8fHx8MTc1OTI0MjM3OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "spring roll"
     },
     {
-      "id": "potato-bites",
-      "description": "Garlic chili potato appetizer",
-      "imageUrl": "https://images.unsplash.com/photo-1566847284565-a733fe649d7d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxwb3RhdG8lMjBiaXRlc3xlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "garlic-chilli-potato-bites",
+      "imageUrl": "https://images.unsplash.com/photo-1694101493160-10f1257fe9fd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxwb3RhdG8lMjBiaXRlc3xlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "potato bites"
     },
     {
-      "id": "honey-potatoes",
-      "description": "Honey glazed fried potatoes",
-      "imageUrl": "https://images.unsplash.com/photo-1719968891229-4b88ca03f937?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxob25leSUyMHBvdGF0b2VzfGVufDB8fHx8MTc1OTI0MDczOHww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "honey potatoes"
+      "id": "honey-blaze-potatoes",
+      "imageUrl": "https://images.unsplash.com/photo-1559675137-f869d0ed7a4a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxob25leSUyMHBvdGF0b3xlbnwwfHx8fDE3NTkxMzkxMzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "honey potato"
     },
     {
-      "id": "veg-tacos",
-      "description": "Vegetable-filled hard shell tacos",
-      "imageUrl": "https://images.unsplash.com/photo-1627564803215-ad55bad5c5ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx2ZWdldGFibGUlMjB0YWNvc3xlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "vegetable tacos"
+      "id": "street-style-veg-tacos",
+      "imageUrl": "https://images.unsplash.com/photo-1626876657310-26bf46fd1d00?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx2ZWclMjB0YWNvc3xlbnwwfHx8fDE3NTkyMzU4NTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "veg tacos"
     },
     {
-      "id": "dim-sum",
-      "description": "Steamed vegetable dumplings",
-      "imageUrl": "https://images.unsplash.com/photo-1610896016252-69180ae2d486?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxzdGVhbWVkJTIwZHVtcGxpbmdzfGVufDB8fHx8MTc1OTI0MDczN3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "steamed dumplings"
+      "id": "steamed-veg-dim-sums",
+      "imageUrl": "https://images.unsplash.com/photo-1628591697740-4378f154b2ce?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZGltJTIwc3Vtc3xlbnwwfHx8fDE3NTkyNDIzNzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "dim sums"
     },
     {
       "id": "peri-peri-fries",
-      "description": "Spicy peri peri french fries",
-      "imageUrl": "https://images.unsplash.com/photo-1633040243825-9163576e47fe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxzcGljeSUyMGZyaWVzfGVufDB8fHx8MTc1OTI0MDczN3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "spicy fries"
+      "imageUrl": "https://images.unsplash.com/photo-1552148184-26a068fce9b8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxwZXJpJTIwcGVyaXxlbnwwfHx8fDE3NTkyMjIzMTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "peri peri"
     },
     {
       "id": "classic-fries",
-      "description": "Salted classic french fries",
-      "imageUrl": "https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxmcmVuY2glMjBmcmllc3xlbnwwfHx8fDE3NTkxNDgzNTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1598679253544-2c97992403ea?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxmcmVuY2glMjBmcmllc3xlbnwwfHx8fDE3NTkxNDgzNTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "french fries"
     },
     {
-      "id": "pani-puri",
-      "description": "Indian street food snack with puris and spiced water",
-      "imageUrl": "https://images.unsplash.com/photo-1669699739247-54f20092f9d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxwYW5pJTIwcHVyaXxlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "pani-puri-shots-2.0",
+      "imageUrl": "https://images.unsplash.com/photo-1687826056231-5156e94758eb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxwYW5pJTIwcHVyaXxlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "pani puri"
     },
     {
-      "id": "manchow-soup",
-      "description": "Indo-Chinese manchow soup",
-      "imageUrl": "https://images.unsplash.com/photo-1721223016672-b42b560b5402?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxtYW5jaG93JTIwc291cHxlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "rustic-manchow",
+      "imageUrl": "https://images.unsplash.com/photo-1659603667872-915f2b953cb7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxtYW5jaG93JTIwc291cHxlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "manchow soup"
     },
     {
-      "id": "hot-sour-soup",
-      "description": "Tangy hot and sour soup",
-      "imageUrl": "https://images.unsplash.com/photo-1646783186826-7146151c8c62?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxzb3VyJTIwc291cHxlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "sour soup"
+      "id": "hot-and-sour-harmony",
+      "imageUrl": "https://images.unsplash.com/photo-1573145443291-e87e59b19816?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxob3QlMjBzb3VyfGVufDB8fHx8MTc1OTI0MjM3OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "hot sour"
     },
     {
-      "id": "herb-soup",
-      "description": "Clear soup with fresh herbs",
-      "imageUrl": "https://images.unsplash.com/photo-1658040844425-d375e9b86831?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxoZXJiJTIwc291cHxlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "crystal-clear-herb-soup",
+      "imageUrl": "https://images.unsplash.com/photo-1665594051407-7385d281ad76?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8aGVyYiUyMHNvdXB8ZW58MHx8fHwxNzU5MjQwNzM3fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "herb soup"
     },
     {
-      "id": "alfredo-pasta",
-      "description": "Penne pasta in creamy alfredo sauce",
-      "imageUrl": "https://images.unsplash.com/photo-1551183053-bf91a1d81141?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxhbGZyZWRvJTIwcGFzdGF8ZW58MHx8fHwxNzU5MTQyNzY5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "creamy-alfredo-elegance",
+      "imageUrl": "https://images.unsplash.com/photo-1662478839788-7d2898ca66cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxhbGZyZWRvJTIwcGFzdGF8ZW58MHx8fHwxNzU5MTQyNzY5fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "alfredo pasta"
     },
     {
-      "id": "aglio-e-olio",
-      "description": "Spaghetti with garlic and oil",
-      "imageUrl": "https://images.unsplash.com/photo-1654171571023-5269565beb71?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxnYXJsaWMlMjBzcGFnaGV0dGl8ZW58MHx8fHwxNzU5MjQwNzM3fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "garlic spaghetti"
+      "id": "aglio-e-olio-spaghetti",
+      "imageUrl": "https://images.unsplash.com/photo-1727511250288-464f310eb8a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxhZ2xpbyUyMG9saW98ZW58MHx8fHwxNzU5MjQyMzc5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "aglio olio"
     },
     {
-      "id": "red-sauce-spaghetti",
-      "description": "Spaghetti in classic tomato sauce",
-      "imageUrl": "https://images.unsplash.com/photo-1575195701265-8cc9774b5599?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx0b21hdG8lMjBzcGFnaGV0dGl8ZW58MHx8fHwxNzU5MjQwNzM5fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "tomato spaghetti"
+      "id": "classic-red-sauce-spaghetti",
+      "imageUrl": "https://images.unsplash.com/photo-1757844742481-6f3002b6218a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8cmVkJTIwc3BhZ2hldHRpfGVufDB8fHx8MTc1OTI0MjM3OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "red spaghetti"
     },
     {
-      "id": "tandoori-roti",
-      "description": "Whole wheat tandoori bread",
-      "imageUrl": "https://images.unsplash.com/photo-1733210438330-95dadd453e9f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHx0YW5kb29yaSUyMHJvdGl8ZW58MHx8fHwxNzU5MjQwNzM3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "classic-tandoori-roti",
+      "imageUrl": "https://images.unsplash.com/photo-1656227914824-314a51120a80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8dGFuZG9vcmklMjByb3RpfGVufDB8fHx8MTc1OTI0MDczN3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "tandoori roti"
     },
     {
       "id": "butter-roti",
-      "description": "Buttered tandoori flatbread",
-      "imageUrl": "https://images.unsplash.com/photo-1709204861766-0b51685fa568?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxidXR0ZXIlMjByb3RpfGVufDB8fHx8MTc1OTI0MDczN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1719148162837-63d2f256231f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxidXR0ZXIlMjByb3RpfGVufDB8fHx8MTc1OTI0MDczN3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "butter roti"
     },
     {
-      "id": "kulcha",
-      "description": "Soft leavened Indian bread",
-      "imageUrl": "https://images.unsplash.com/photo-1634976997107-8cfa3b4ec10f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxrdWxjaGElMjBicmVhZHxlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "kulcha-traditionale",
+      "imageUrl": "https://images.unsplash.com/photo-1584796101179-52cfea2e6f52?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxrdWxjaGElMjBicmVhZHxlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "kulcha bread"
     },
     {
-      "id": "butter-kulcha",
-      "description": "Buttered soft leavened bread",
-      "imageUrl": "https://images.unsplash.com/photo-1719148162837-63d2f256231f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxidXR0ZXIlMjBrdWxjaGF8ZW58MHx8fHwxNzU5MjQwNzM3fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "butter-velvet-kulcha",
+      "imageUrl": "https://images.unsplash.com/photo-1736752346246-61f4daedfde0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxidXR0ZXIlMjBrdWxjaGF8ZW58MHx8fHwxNzU5MjQwNzM3fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "butter kulcha"
     },
     {
-      "id": "dal-makhani",
-      "description": "Creamy black lentil curry",
-      "imageUrl": "https://images.unsplash.com/photo-1710956446132-832273cd344d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxkYWwlMjBtYWtoYW5pfGVufDB8fHx8MTc1OTI0MDczN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "dal-makhani-luxe",
+      "imageUrl": "https://images.unsplash.com/photo-1720701574961-320111f1181c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxkYWwlMjBtYWtoYW5pfGVufDB8fHx8MTc1OTI0MDczN3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "dal makhani"
     },
     {
-      "id": "tadka-dal",
-      "description": "Tempered yellow lentil dal",
-      "imageUrl": "https://images.unsplash.com/photo-1734770931927-6410f9a64832?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx0YWRrYSUyMGRhbHxlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "tadka dal"
+      "id": "tandoori-tadka-dal",
+      "imageUrl": "https://images.unsplash.com/photo-1581125119293-4803aa54b372?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8dGFuZG9vcmklMjBkYWx8ZW58MHx8fHwxNzU5MjQyMzgwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tandoori dal"
     },
     {
-      "id": "plain-dal",
-      "description": "Simple homestyle yellow lentil dal",
-      "imageUrl": "https://images.unsplash.com/photo-1702041357314-db5826c96f04?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx5ZWxsb3clMjBkYWx8ZW58MHx8fHwxNzU5MjQwNzM4fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "yellow dal"
+      "id": "homestyle-plain-dal",
+      "imageUrl": "https://images.unsplash.com/photo-1755439917128-c4cede457fa6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxwbGFpbiUyMGRhbHxlbnwwfHx8fDE3NTkyNDIzODB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "plain dal"
     },
     {
-      "id": "kolhapuri-curry",
-      "description": "Spicy Maharashtrian vegetable curry",
-      "imageUrl": "https://images.unsplash.com/photo-1627366422957-3efa9c6df0fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxrb2xoYXB1cmklMjBjdXJyeXxlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "kolhapuri-zest-curry",
+      "imageUrl": "https://images.unsplash.com/photo-1708782341026-f4877b52fee7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxrb2xoYXB1cmklMjBjdXJyeXxlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "kolhapuri curry"
     },
     {
-      "id": "kadai-veg",
-      "description": "Mixed vegetables in kadai masala",
-      "imageUrl": "https://images.unsplash.com/photo-1652285952489-de9ca0ffe160?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxrYWRhaSUyMHZlZ2V0YWJsZXxlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "kadai vegetable"
+      "id": "kadai-veg-masala",
+      "imageUrl": "https://images.unsplash.com/photo-1719002906692-32dcef8010e7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxrYWRhaSUyMHZlZ3xlbnwwfHx8fDE3NTkyNDIzODB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "kadai veg"
     },
     {
       "id": "paneer-butter-masala",
-      "description": "Paneer in creamy tomato gravy",
-      "imageUrl": "https://images.unsplash.com/photo-1733006614005-19a8cebf6d3b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxwYW5lZXIlMjBtYXNhbGF8ZW58MHx8fHwxNzU5MjQwNzM4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1735233024815-7986206a18a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxwYW5lZXIlMjBtYXNhbGF8ZW58MHx8fHwxNzU5MjQwNzM4fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "paneer masala"
     },
     {
-      "id": "seasonal-veg",
-      "description": "Curry with fresh seasonal vegetables",
-      "imageUrl": "https://images.unsplash.com/photo-1597387216134-81e3c0e69b21?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx2ZWdldGFibGUlMjBjdXJyeXxlbnwwfHx8fDE3NTkxNjExMzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "vegetable curry"
+      "id": "seasonal-veg-mélange",
+      "imageUrl": "https://images.unsplash.com/photo-1696527785449-9a05db89c7f8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxzZWFzb25hbCUyMHZlZ3xlbnwwfHx8fDE3NTkyNDIzODB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "seasonal veg"
     },
     {
-      "id": "veg-biryani",
-      "description": "Aromatic vegetable rice pilaf",
-      "imageUrl": "https://images.unsplash.com/photo-1607877807196-97faaf8f7308?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHx2ZWdldGFibGUlMjBiaXJ5YW5pfGVufDB8fHx8MTc1OTIzNDA5OHww&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "vegetable biryani"
+      "id": "royal-veg-biryani",
+      "imageUrl": "https://images.unsplash.com/photo-1570565188831-d90ae8b75341?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx2ZWclMjBiaXJ5YW5pfGVufDB8fHx8MTc1OTIzNTg1Mnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "veg biryani"
     },
     {
-      "id": "ghee-rice",
-      "description": "Rice cooked with clarified butter",
-      "imageUrl": "https://images.unsplash.com/photo-1733414717515-d997dafb7341?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxnaGVlJTIwcmljZXxlbnwwfHx8fDE3NTkyNDA3Mzh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "golden-ghee-rice",
+      "imageUrl": "https://images.unsplash.com/photo-1627482265910-5c0ff6bee088?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxnaGVlJTIwcmljZXxlbnwwfHx8fDE3NTkyNDA3Mzh8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "ghee rice"
     },
     {
-      "id": "jeera-rice",
-      "description": "Cumin-tempered rice",
-      "imageUrl": "https://images.unsplash.com/photo-1611023381689-347f931fe739?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8amVlcmElMjByaWNlfGVufDB8fHx8MTc1OTI0MDczN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "jeera-essence-rice",
+      "imageUrl": "https://images.unsplash.com/photo-1647577931985-e0c3e8fb815c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxqZWVyYSUyMHJpY2V8ZW58MHx8fHwxNzU5MjQwNzM3fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "jeera rice"
     },
     {
-      "id": "curd-rice",
-      "description": "Yogurt rice with tempering",
-      "imageUrl": "https://images.unsplash.com/photo-1644131447497-8723db691320?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxjdXJkJTIwcmljZXxlbnwwfHx8fDE3NTkyNDA3Mzh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "curd-rice-bliss",
+      "imageUrl": "https://images.unsplash.com/photo-1613045935265-265ff612e0e2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Y3VyZCUyMHJpY2V8ZW58MHx8fHwxNzU5MjQwNzM4fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "curd rice"
     },
     {
-      "id": "smoked-elixir",
-      "description": "Smoky tropical fruit mocktail",
-      "imageUrl": "https://images.unsplash.com/photo-1629438055512-19d98a6eb0e5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzbW9rZWQlMjBtb2NrdGFpbHxlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "smoked mocktail"
+      "id": "smoked-troasian-elixir",
+      "imageUrl": "https://images.unsplash.com/photo-1742973889131-94812c5c6b9f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8ZnJ1aXQlMjBtb2NrdGFpbHxlbnwwfHx8fDE3NTkyNDIzODB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fruit mocktail"
     },
     {
-      "id": "summer-cooler",
-      "description": "Citrus and blueberry mocktail",
-      "imageUrl": "https://images.unsplash.com/photo-1624057855662-4a182579af3b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxibHVlYmVycnklMjBjb29sZXJ8ZW58MHx8fHwxNzU5MjQwNzM3fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "blueberry cooler"
+      "id": "end-of-summer-cooler",
+      "imageUrl": "https://images.unsplash.com/photo-1654263630088-640703a8a47b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzdW1tZXIlMjBjb29sZXJ8ZW58MHx8fHwxNzU5MjQyMzc5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "summer cooler"
     },
     {
-      "id": "guava-kick",
-      "description": "Spicy guava juice drink",
-      "imageUrl": "https://images.unsplash.com/photo-1750955568973-2bab1b547973?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxndWF2YSUyMGp1aWNlfGVufDB8fHx8MTc1OTI0MDczN3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "spicy-guava-kick",
+      "imageUrl": "https://images.unsplash.com/photo-1623329786985-cd1ca52f8c70?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxndWF2YSUyMGp1aWNlfGVufDB8fHx8MTc1OTI0MDczN3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "guava juice"
     },
     {
-      "id": "vietnamese-coffee",
-      "description": "Iced coffee with condensed milk",
-      "imageUrl": "https://images.unsplash.com/photo-1630184799082-05623dbdc7f7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8aWNlZCUyMGNvZmZlZXxlbnwwfHx8fDE3NTkxNjQyNjN8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "vietnamese-iced-coffee",
+      "imageUrl": "https://images.unsplash.com/photo-1592663527359-cf6642f54cff?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxpY2VkJTIwY29mZmVlfGVufDB8fHx8MTc1OTE2NDI2M3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "iced coffee"
     },
     {
-      "id": "cold-coffee",
-      "description": "Classic frothy cold coffee",
+      "id": "classic-cold-coffee",
       "imageUrl": "https://images.unsplash.com/photo-1571328003758-4a3921661729?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjb2xkJTIwY29mZmVlfGVufDB8fHx8MTc1OTI0MDczN3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "cold coffee"
     },
     {
-      "id": "hazelnut-boba",
-      "description": "Hazelnut coffee with boba pearls",
-      "imageUrl": "https://images.unsplash.com/photo-1747016804753-866c3ed6b3b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxib2JhJTIwdGVhfGVufDB8fHx8MTc1OTI0MDczOXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "hazelnut-boba-bliss",
+      "imageUrl": "https://images.unsplash.com/photo-1745883949374-baeba0ed57c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxib2JhJTIwdGVhfGVufDB8fHx8MTc1OTI0MDczOXww&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "boba tea"
     },
     {
-      "id": "mango-mojito",
-      "description": "Raw mango and mint mojito",
+      "id": "raw-mango-mojito",
       "imageUrl": "https://images.unsplash.com/photo-1628620679516-f33276fd4593?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxtYW5nbyUyMG1vaml0b3xlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "mango mojito"
     },
     {
-      "id": "water-bottle",
-      "description": "Bottle of spring water",
-      "imageUrl": "https://images.unsplash.com/photo-1616118133712-8c947f7b822c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHx3YXRlciUyMGJvdHRsZXxlbnwwfHx8fDE3NTkyMDcxNTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "id": "water-(1-l)",
+      "imageUrl": "https://images.unsplash.com/photo-1530711654140-23ef9ad45094?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx3YXRlciUyMGJvdHRsZXxlbnwwfHx8fDE3NTkyMDcxNTd8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "water bottle"
     },
     {
       "id": "mimi-doce",
-      "description": "Indian fudge dessert",
-      "imageUrl": "https://images.unsplash.com/photo-1695568180842-1fcf31187dd6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxpbmRpYW4lMjBzd2VldHxlbnwwfHx8fDE3NTkyNDA3Mzd8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "indian sweet"
+      "imageUrl": "https://images.unsplash.com/photo-1708146464361-5c5ce4f9abb6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxpbmRpYW4lMjBmdWRnZXxlbnwwfHx8fDE3NTkyNDIzNzl8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "indian fudge"
     },
     {
       "id": "affogato",
-      "description": "Espresso poured over ice cream",
-      "imageUrl": "https://images.unsplash.com/photo-1575824805849-fbf1fe38ddba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxhZmZvZ2F0byUyMGRlc3NlcnR8ZW58MHx8fHwxNzU5MjQwNzM3fDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "affogato dessert"
+      "imageUrl": "https://images.unsplash.com/photo-1606913170721-12f535425f59?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxlc3ByZXNzbyUyMGljZWNyZWFtfGVufDB8fHx8MTc1OTI0MjM3OXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "espresso icecream"
     },
     {
       "id": "regular-coffee",
-      "description": "A cup of filter coffee",
-      "imageUrl": "https://images.unsplash.com/photo-1610632380989-680fe40816c6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjb2ZmZWUlMjBjdXB8ZW58MHx8fHwxNzU5MTI3MDU2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1554600740-951beab4712b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxjb2ZmZWUlMjBjdXB8ZW58MHx8fHwxNzU5MTI3MDU2fDA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "coffee cup"
     },
     {
       "id": "large-coffee",
-      "description": "A large cup of coffee",
-      "imageUrl": "https://images.unsplash.com/photo-1702743540785-2f36b9a50a97?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxsYXJnZSUyMGNvZmZlZXxlbnwwfHx8fDE3NTkyNDA3Mzh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "https://images.unsplash.com/photo-1648482898916-2bcb544514b9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxsYXJnZSUyMGNvZmZlZXxlbnwwfHx8fDE3NTkyNDA3Mzh8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "imageHint": "large coffee"
     }
   ]

@@ -1,0 +1,8 @@
+<svg width="200" height="100" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M50 90C70 70 80 50 90 30" stroke="black" stroke-width="2" fill="none"/>
+<path d="M60 95C85 70 95 45 105 25" stroke="black" stroke-width="1.5" fill="none"/>
+<path d="M150 90C130 70 120 50 110 30" stroke="black" stroke-width="2" fill="none"/>
+<path d="M140 95C115 70 105 45 95 25" stroke="black" stroke-width="1.5" fill="none"/>
+<path d="M20 20C40 40 60 40 80 20" stroke="black" stroke-width="1" fill="none" transform="rotate(20 50 50)"/>
+<path d="M180 20C160 40 140 40 120 20" stroke="black" stroke-width="1" fill="none" transform="rotate(-20 150 50)"/>
+</svg>
