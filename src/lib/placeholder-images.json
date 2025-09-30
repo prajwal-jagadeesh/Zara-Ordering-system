@@ -1,3 +1,64 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "bruschetta",
+      "description": "Toasted bread with tomatoes, garlic, and basil.",
+      "imageUrl": "https://images.unsplash.com/photo-1689693138625-ed8552aaefc0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxicnVzY2hldHRhJTIwYnJlYWR8ZW58MHx8fHwxNzU5MjIyODE1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "bruschetta bread"
+    },
+    {
+      "id": "spinach-dip",
+      "description": "Creamy spinach and artichoke dip with tortilla chips.",
+      "imageUrl": "https://images.unsplash.com/photo-1703219339970-98cd69cc896f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxzcGluYWNoJTIwZGlwfGVufDB8fHx8MTc1OTIxMzI3NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "spinach dip"
+    },
+    {
+      "id": "calamari",
+      "description": "Fried calamari with a side of marinara sauce.",
+      "imageUrl": "https://images.unsplash.com/photo-1647511575332-ee27d2a53182?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxmcmllZCUyMGNhbGFtYXJpfGVufDB8fHx8MTc1OTIyMTQyOHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fried calamari"
+    },
+    {
+      "id": "grilled-salmon",
+      "description": "Grilled salmon fillet with roasted asparagus.",
+      "imageUrl": "https://images.unsplash.com/photo-1509402308-817902776267?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxncmlsbGVkJTIwc2FsbW9ufGVufDB8fHx8MTc1OTE2NTMxNXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "grilled salmon"
+    },
+    {
+      "id": "pasta-primavera",
+      "description": "Pasta with fresh spring vegetables in a light cream sauce.",
+      "imageUrl": "https://images.unsplash.com/photo-1614207279966-a46c93c0fbc2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxwYXN0YSUyMHZlZ2V0YWJsZXN8ZW58MHx8fHwxNzU5MTIzNTgzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "pasta vegetables"
+    },
+    {
+      "id": "steak-frites",
+      "description": "Seared steak with a side of crispy french fries.",
+      "imageUrl": "https://images.unsplash.com/photo-1600020333626-de555db06232?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzdGVhayUyMGZyaWVzfGVufDB8fHx8MTc1OTI0MDU3OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "steak fries"
+    },
+    {
+      "id": "chicken-parm",
+      "description": "Breaded chicken breast with marinara and mozzarella, served with spaghetti.",
+      "imageUrl": "https://images.unsplash.com/photo-1700324638718-dade543770fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxjaGlja2VuJTIwcGFybWVzYW58ZW58MHx8fHwxNzU5MjQwNTc4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "chicken parmesan"
+    },
+    {
+      "id": "tiramisu",
+      "description": "Classic Italian dessert with coffee-soaked ladyfingers and mascarpone cream.",
+      "imageUrl": "https://images.unsplash.com/photo-1560398327-9fad15439ada?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx0aXJhbWlzdSUyMGNha2V8ZW58MHx8fHwxNzU5MjQwNTc4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "tiramisu cake"
+    },
+    {
+      "id": "lava-cake",
+      "description": "Warm chocolate lava cake with a molten center, served with vanilla ice cream.",
+      "imageUrl": "https://images.unsplash.com/photo-1605807646983-377bc5a76493?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxjaG9jb2xhdGUlMjBjYWtlfGVufDB8fHx8MTc1OTEzNzc5Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "chocolate cake"
+    },
+    {
+      "id": "cheesecake",
+      "description": "New York style cheesecake with a strawberry topping.",
+      "imageUrl": "https://images.unsplash.com/photo-1707528903686-91cbbe2f2985?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHxjaGVlc2VjYWtlJTIwc2xpY2V8ZW58MHx8fHwxNzU5MTc2MDYzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cheesecake slice"
+    }
+  ]
 }
