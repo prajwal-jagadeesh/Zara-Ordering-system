@@ -13,9 +13,9 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
 
   return (
     <Tabs defaultValue="Appetizers" className="w-full">
-      <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 lg:grid-cols-9 max-w-6xl mx-auto h-auto min-h-12">
+      <TabsList className="h-auto flex flex-wrap justify-center max-w-4xl mx-auto">
         {categories.map(category => (
-          <TabsTrigger key={category} value={category} className="text-base h-10">
+          <TabsTrigger key={category} value={category} className="text-base h-10 flex-grow">
             {category}
           </TabsTrigger>
         ))}
