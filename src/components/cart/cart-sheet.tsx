@@ -49,13 +49,13 @@ export function CartSheet({ open, onOpenChange }: CartSheetProps) {
             <ScrollArea className="flex-1">
               {orderedItems.length > 0 && (
                 <div className="px-6 py-4">
-                  <h3 className="flex items-center text-lg font-semibold text-muted-foreground mb-4">
-                    <ChefHat className="mr-3 h-5 w-5" />
-                    Already Ordered
+                  <h3 className="flex items-center text-lg font-semibold text-foreground mb-4">
+                    <ChefHat className="mr-3 h-5 w-5 text-primary" />
+                    In the Kitchen
                   </h3>
                   <div className="flex flex-col gap-4">
                     {orderedItems.map(item => (
-                       <div key={item.id} className="flex items-start justify-between space-x-4 opacity-70">
+                       <div key={item.id} className="flex items-start justify-between space-x-4">
                          <div className="flex items-center space-x-4">
                            <div>
                              <p className="font-medium">{item.name} <span className='text-sm text-muted-foreground'>(x{item.quantity})</span></p>
