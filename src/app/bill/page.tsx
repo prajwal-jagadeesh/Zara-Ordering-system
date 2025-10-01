@@ -17,23 +17,34 @@ const BillPage = () => {
 
   useEffect(() => {
     setIsClient(true);
-    const tableId = searchParams.get('tableId');
-    if (tableId) {
-      const foundOrder = orders.find(o => o.tableId === tableId);
-      setOrder(foundOrder || null);
+  }, []);
+  
+  useEffect(() => {
+    if (isClient) {
+      const tableId = searchParams.get('tableId');
+      if (tableId && orders.length > 0) {
+        const foundOrder = orders.find(o => o.tableId === tableId);
+        setOrder(foundOrder || null);
+      }
     }
-  }, [searchParams, orders]);
+  }, [searchParams, orders, isClient]);
 
   const handlePrint = () => {
     window.print();
   };
 
-  if (!isClient) {
-    return <div className="p-10 text-center">Loading...</div>;
+  if (!isClient || (orders.length > 0 && !order)) {
+     const tableId = searchParams.get('tableId');
+     if (tableId && orders.find(o => o.tableId === tableId)) {
+        // Order exists but component hasn't updated yet, show loading
+     } else if (tableId) {
+        return <div className="p-10 text-center font-bold text-red-500">Order not found for this table.</div>;
+     }
+     return <div className="p-10 text-center">Loading Bill...</div>;
   }
   
   if (!order) {
-    return <div className="p-10 text-center font-bold text-red-500">Order not found for this table.</div>;
+     return <div className="p-10 text-center">Loading Bill...</div>;
   }
 
   const allItems = [
