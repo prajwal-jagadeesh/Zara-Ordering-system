@@ -14,6 +14,7 @@ const BillPage = () => {
   const { orders } = useCart();
   const [order, setOrder] = useState<Order | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsClient(true);
@@ -25,6 +26,13 @@ const BillPage = () => {
       if (tableId && orders.length > 0) {
         const foundOrder = orders.find(o => o.tableId === tableId);
         setOrder(foundOrder || null);
+        setIsLoading(false);
+      } else if (tableId && orders.length === 0) {
+        // Still waiting for orders to be loaded from storage
+        setIsLoading(true);
+      } else {
+        // No tableId or no orders after loading
+        setIsLoading(false);
       }
     }
   }, [searchParams, orders, isClient]);
@@ -32,19 +40,13 @@ const BillPage = () => {
   const handlePrint = () => {
     window.print();
   };
-
-  if (!isClient || (orders.length > 0 && !order)) {
-     const tableId = searchParams.get('tableId');
-     if (tableId && orders.find(o => o.tableId === tableId)) {
-        // Order exists but component hasn't updated yet, show loading
-     } else if (tableId) {
-        return <div className="p-10 text-center font-bold text-red-500">Order not found for this table.</div>;
-     }
+  
+  if (isLoading || !isClient) {
      return <div className="p-10 text-center">Loading Bill...</div>;
   }
   
   if (!order) {
-     return <div className="p-10 text-center">Loading Bill...</div>;
+     return <div className="p-10 text-center font-bold text-red-500">Order not found for this table.</div>;
   }
 
   const allItems = [
