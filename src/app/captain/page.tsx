@@ -6,10 +6,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Bell, Check, X, ChefHat, Loader2, Utensils, CheckCircle2, CreditCard, CookingPot } from 'lucide-react';
+import { Bell, Check, X, ChefHat, Loader2, Utensils, CheckCircle2, CreditCard, CookingPot, FileText } from 'lucide-react';
 import CaptainHeader from './_components/captain-header';
 import type { Order, CartItem } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
+import Link from 'next/link';
 
 const OrderItemRow = ({ 
     item, 
@@ -140,9 +141,18 @@ const OrderCard = ({ order }: {order: Order}) => {
                     </>
                 )}
                 {isFullyServed && !hasPendingItems && (
-                    <Button size="sm" onClick={() => closeOrder(order.tableId)} className="w-full">
-                        <CreditCard className="mr-2 h-4 w-4" /> Payment Received
-                    </Button>
+                    <div className="flex flex-col sm:flex-row gap-2 w-full">
+                        <Link href={`/bill?tableId=${order.tableId}`} passHref legacyBehavior>
+                           <a target="_blank" className='w-full'>
+                             <Button size="sm" variant="outline" className="w-full">
+                                <FileText className="mr-2 h-4 w-4" /> Generate Bill
+                            </Button>
+                           </a>
+                        </Link>
+                        <Button size="sm" onClick={() => closeOrder(order.tableId)} className="w-full">
+                            <CreditCard className="mr-2 h-4 w-4" /> Payment Received
+                        </Button>
+                    </div>
                 )}
             </CardFooter>
         </Card>
@@ -174,11 +184,12 @@ export default function CaptainPage() {
         return totalItems > 0;
     });
 
-    const pendingOrders = activeOrders.filter(o => o.status === 'pending');
+    const pendingOrders = activeOrders.filter(o => o.status === 'pending' || (o.pendingItems || []).length > 0);
     
     const inProgressOrders = activeOrders.filter(o => 
-        o.status === 'confirmed' && 
-        ((o.pendingItems || []).length > 0 || (o.confirmedItems || []).length > 0 || (o.readyItems || []).length > 0)
+        (o.status === 'confirmed' || o.status === 'pending') &&
+        (o.pendingItems || []).length === 0 &&
+        ((o.confirmedItems || []).length > 0 || (o.readyItems || []).length > 0)
     );
     
     const completedOrders = activeOrders.filter(o => 
