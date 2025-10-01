@@ -130,10 +130,6 @@ export default function CaptainPage() {
     const [isClient, setIsClient] = React.useState(false);
 
     React.useEffect(() => {
-        const item = localStorage.getItem('orders');
-        if (item) {
-            useCart.setState(state => ({ ...state, orders: JSON.parse(item) }));
-        }
         setIsClient(true);
     }, []);
 
