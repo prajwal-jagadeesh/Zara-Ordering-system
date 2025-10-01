@@ -185,28 +185,28 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   const confirmOrder = (tableId: string) => {
     setOrders(prev => prev.map(o => {
-        if (o.tableId === tableId) {
-            const currentConfirmed = [...(o.confirmedItems || [])];
-            const itemsToConfirm = [...(o.pendingItems || [])];
-            
-            itemsToConfirm.forEach(pendingItem => {
-                const existingIndex = currentConfirmed.findIndex(ci => ci.id === pendingItem.id);
-                if (existingIndex > -1) {
-                    currentConfirmed[existingIndex].quantity += pendingItem.quantity;
-                } else {
-                    currentConfirmed.push(pendingItem);
-                }
-            });
+      if (o.tableId === tableId) {
+        // Deep copy to prevent mutation issues
+        const newConfirmedItems = JSON.parse(JSON.stringify(o.confirmedItems || []));
+        const itemsToConfirm = o.pendingItems || [];
 
-            return { 
-                ...o, 
-                status: 'confirmed',
-                pendingItems: [],
-                confirmedItems: currentConfirmed,
-                servedItems: o.servedItems || [],
-            };
-        }
-        return o;
+        itemsToConfirm.forEach(pendingItem => {
+          const existingIndex = newConfirmedItems.findIndex((ci: CartItem) => ci.id === pendingItem.id);
+          if (existingIndex > -1) {
+            newConfirmedItems[existingIndex].quantity += pendingItem.quantity;
+          } else {
+            newConfirmedItems.push(pendingItem);
+          }
+        });
+
+        return {
+          ...o,
+          status: 'confirmed',
+          pendingItems: [],
+          confirmedItems: newConfirmedItems,
+        };
+      }
+      return o;
     }));
   };
   
