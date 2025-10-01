@@ -28,7 +28,7 @@ async function getMenuItems(): Promise<MenuItem[]> {
 
 export default function MenuPage() {
   const [menuItems, setMenuItems] = React.useState<MenuItem[]>([]);
-  const { cartItems, orders, tableNumber, totalPrice, setIsCartOpen, setTableNumber } = useCart();
+  const { cartItems, orders, tableNumber, setIsCartOpen, setTableNumber } = useCart();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -48,8 +48,8 @@ export default function MenuPage() {
   const currentOrder = orders.find(o => o.tableId === tableNumber);
   
   const totalItemsInCart = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-  const totalPendingInOrder = currentOrder?.pendingItems.reduce((acc, item) => acc + item.quantity, 0) || 0;
-  const totalConfirmedInOrder = currentOrder?.confirmedItems.reduce((acc, item) => acc + item.quantity, 0) || 0;
+  const totalPendingInOrder = (currentOrder?.pendingItems || []).reduce((acc, item) => acc + item.quantity, 0);
+  const totalConfirmedInOrder = (currentOrder?.confirmedItems || []).reduce((acc, item) => acc + item.quantity, 0);
   const combinedTotalItems = totalItemsInCart + totalPendingInOrder + totalConfirmedInOrder;
   
   const totalCartPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
