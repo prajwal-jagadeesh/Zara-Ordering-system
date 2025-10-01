@@ -71,7 +71,7 @@ export default function CaptainPage() {
                     <div className="mb-8">
                         <h2 className="text-xl font-bold mb-4 flex items-center gap-2"><Bell className="text-destructive" /> Pending Orders</h2>
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            {pendingOrders.map(order => <OrderCard key={order.tableId} order={order} />)}
+                            {pendingOrders.map(order => <OrderCard key={`${order.tableId}-${order.orderTime}`} order={order} />)}
                         </div>
                     </div>
                 )}
@@ -80,7 +80,7 @@ export default function CaptainPage() {
                      <div className="mb-8">
                         <h2 className="text-xl font-bold mb-4 flex items-center gap-2"><ChefHat /> Confirmed Orders</h2>
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            {confirmedOrders.map(order => <OrderCard key={order.tableId} order={order} />)}
+                            {confirmedOrders.map(order => <OrderCard key={`${order.tableId}-${order.orderTime}`} order={order} />)}
                         </div>
                     </div>
                 )}
