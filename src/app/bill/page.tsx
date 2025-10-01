@@ -23,17 +23,16 @@ const BillPage = () => {
   useEffect(() => {
     if (isClient) {
       const tableId = searchParams.get('tableId');
+      // Only proceed if we have a tableId and orders have been loaded from storage.
       if (tableId && orders.length > 0) {
         const foundOrder = orders.find(o => o.tableId === tableId);
         setOrder(foundOrder || null);
         setIsLoading(false);
-      } else if (tableId && orders.length === 0) {
-        // Still waiting for orders to be loaded from storage
-        setIsLoading(true);
-      } else {
-        // No tableId or no orders after loading
+      } else if (!tableId) {
+        // If there's no tableId, we can stop loading.
         setIsLoading(false);
       }
+      // If orders.length is 0, we keep isLoading as true, waiting for the cart context to update.
     }
   }, [searchParams, orders, isClient]);
 
@@ -41,7 +40,7 @@ const BillPage = () => {
     window.print();
   };
   
-  if (isLoading || !isClient) {
+  if (!isClient || isLoading) {
      return <div className="p-10 text-center">Loading Bill...</div>;
   }
   
