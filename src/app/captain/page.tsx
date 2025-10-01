@@ -101,7 +101,7 @@ export default function CaptainPage() {
     }
     
     const pendingOrders = orders.filter(o => o.status === 'pending');
-    const confirmedOrders = orders.filter(o => o.status === 'confirmed' && o.pendingItems.length === 0);
+    const confirmedOrders = orders.filter(o => o.status === 'confirmed' && (o.pendingItems || []).length === 0);
 
     return (
         <div className="bg-background min-h-screen">
@@ -137,3 +137,5 @@ export default function CaptainPage() {
         </div>
     )
 }
+
+    

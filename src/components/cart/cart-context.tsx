@@ -162,8 +162,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     
     const order = orders.find(o => o.tableId === tableNumber);
     
-    const pendingItem = order?.pendingItems.find(i => i.id === itemId);
-    const confirmedItem = order?.confirmedItems.find(i => i.id === itemId);
+    const pendingItem = (order?.pendingItems || []).find(i => i.id === itemId);
+    const confirmedItem = (order?.confirmedItems || []).find(i => i.id === itemId);
     const cartItem = cartItems.find(i => i.id === itemId);
 
     return (pendingItem?.quantity || 0) + (confirmedItem?.quantity || 0) + (cartItem?.quantity || 0);
@@ -249,3 +249,5 @@ export const useCart = () => {
   }
   return context;
 };
+
+    
