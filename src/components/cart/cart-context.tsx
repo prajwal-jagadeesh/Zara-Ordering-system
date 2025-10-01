@@ -160,15 +160,21 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   };
   
   const getItemQuantity = (itemId: number) => {
+    const cartItem = cartItems.find(i => i.id === item.id);
+    return cartItem?.quantity || 0;
+  };
+  
+  const getTotalItemQuantity = (itemId: number) => {
     if(!tableNumber) return 0;
     
     const order = orders.find(o => o.tableId === tableNumber);
     
     const pendingItem = (order?.pendingItems || []).find(i => i.id === itemId);
     const confirmedItem = (order?.confirmedItems || []).find(i => i.id === itemId);
+    const servedItem = (order?.servedItems || []).find(i => i.id === itemId);
     const cartItem = cartItems.find(i => i.id === itemId);
 
-    return (pendingItem?.quantity || 0) + (confirmedItem?.quantity || 0) + (cartItem?.quantity || 0);
+    return (pendingItem?.quantity || 0) + (confirmedItem?.quantity || 0) + (cartItem?.quantity || 0) + (servedItem?.quantity || 0);
   };
 
 
@@ -269,7 +275,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     isCartAnimating,
     isCartOpen,
     setIsCartOpen,
-    getItemQuantity,
+    getItemQuantity: getTotalItemQuantity,
     confirmOrder,
     rejectOrder,
     serveItem,
