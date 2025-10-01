@@ -31,8 +31,10 @@ const BillPage = () => {
       } else if (!tableId) {
         // If there's no tableId, we can stop loading.
         setIsLoading(false);
+      } else if (orders.length === 0) {
+        // Still waiting for orders to load from context
+        setIsLoading(true);
       }
-      // If orders.length is 0, we keep isLoading as true, waiting for the cart context to update.
     }
   }, [searchParams, orders, isClient]);
 
@@ -61,78 +63,96 @@ const BillPage = () => {
 
 
   return (
-    <div className="bg-white text-black min-h-screen">
-      <div className="max-w-md mx-auto p-4 sm:p-8 border-dashed border-2 border-gray-400 my-8 print:border-none print:my-0">
-        <header className="text-center mb-6">
-          <h1 className="text-2xl font-bold font-serif tracking-wider">Nikee's Zara</h1>
-          <p className="text-sm">Customer Receipt</p>
-        </header>
+    <>
+        <style jsx global>{`
+            @media print {
+                body {
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
+                }
+                .receipt-container {
+                    width: 72mm;
+                    margin: 0;
+                    padding: 0;
+                    background-color: white !important;
+                }
+                .no-print {
+                    display: none;
+                }
+            }
+             @page {
+                size: 80mm;
+                margin: 0;
+            }
+        `}</style>
+        <div className="bg-white text-black min-h-screen font-mono">
+            <div className="receipt-container p-2 mx-auto sm:w-[300px]">
+                <header className="text-center mb-2">
+                    <h1 className="text-lg font-bold">Nikee's Zara</h1>
+                    <p className="text-xs">Customer Receipt</p>
+                </header>
 
-        <Separator className="my-4 bg-gray-400 border-dashed" />
+                <hr className="border-dashed border-black my-2" />
 
-        <div className="flex justify-between text-sm mb-4">
-            <div>
-                <p><span className="font-semibold">Table:</span> {order.tableId}</p>
+                <div className="text-xs mb-2">
+                    <p><span className="font-semibold">Table:</span> {order.tableId}</p>
+                    <p><span className="font-semibold">Date:</span> {format(new Date(), 'PP')}</p>
+                    <p><span className="font-semibold">Time:</span> {format(new Date(), 'p')}</p>
+                </div>
+
+                <hr className="border-dashed border-black my-2" />
+
+                <table className="w-full text-xs">
+                    <thead>
+                        <tr className="border-b border-dashed border-black">
+                        <th className="text-left font-semibold py-1">ITEM</th>
+                        <th className="text-center font-semibold py-1">QTY</th>
+                        <th className="text-right font-semibold py-1">TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {allItems.map(item => (
+                        <tr key={item.id}>
+                            <td className="py-0.5">{item.name}</td>
+                            <td className="text-center py-0.5">{item.quantity}</td>
+                            <td className="text-right py-0.5">₹{(item.price * item.quantity).toFixed(2)}</td>
+                        </tr>
+                        ))}
+                    </tbody>
+                </table>
+
+                <hr className="border-dashed border-black my-2" />
+
+                <div className="space-y-1 text-xs">
+                    <div className="flex justify-between">
+                        <span>Subtotal</span>
+                        <span>₹{subtotal.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                        <span>VAT (5%)</span>
+                        <span>₹{vat.toFixed(2)}</span>
+                    </div>
+                    <hr className="border-dashed border-black my-1" />
+                    <div className="flex justify-between font-bold text-sm">
+                        <span>Grand Total</span>
+                        <span>₹{grandTotal.toFixed(2)}</span>
+                    </div>
+                </div>
+                
+                <hr className="border-dashed border-black my-2" />
+
+                <p className="text-center text-[10px] mt-4">
+                Thank you for dining with us!
+                </p>
             </div>
-            <div>
-                <p><span className="font-semibold">Date:</span> {format(new Date(), 'PP')}</p>
-                <p><span className="font-semibold">Time:</span> {format(new Date(), 'p')}</p>
+
+            <div className="max-w-md mx-auto text-center my-4 no-print">
+                <Button onClick={handlePrint}>
+                    <Printer className="mr-2 h-4 w-4" /> Print Bill
+                </Button>
             </div>
         </div>
-
-        <Separator className="my-4 bg-gray-400 border-dashed" />
-
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-dashed border-gray-400">
-              <th className="text-left font-semibold py-2">ITEM</th>
-              <th className="text-center font-semibold py-2">QTY</th>
-              <th className="text-right font-semibold py-2">PRICE</th>
-              <th className="text-right font-semibold py-2">TOTAL</th>
-            </tr>
-          </thead>
-          <tbody>
-            {allItems.map(item => (
-              <tr key={item.id}>
-                <td className="py-1">{item.name}</td>
-                <td className="text-center py-1">{item.quantity}</td>
-                <td className="text-right py-1">₹{item.price.toFixed(2)}</td>
-                <td className="text-right py-1">₹{(item.price * item.quantity).toFixed(2)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <Separator className="my-4 bg-gray-400 border-dashed" />
-
-        <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-                <span>Subtotal</span>
-                <span>₹{subtotal.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between">
-                <span>VAT (5%)</span>
-                <span>₹{vat.toFixed(2)}</span>
-            </div>
-             <div className="flex justify-between font-bold text-lg border-t border-dashed border-gray-400 pt-2 mt-2">
-                <span>Grand Total</span>
-                <span>₹{grandTotal.toFixed(2)}</span>
-            </div>
-        </div>
-        
-        <Separator className="my-4 bg-gray-400 border-dashed" />
-
-        <p className="text-center text-xs mt-6">
-          Thank you for dining with us!
-        </p>
-      </div>
-
-      <div className="max-w-md mx-auto text-center mb-8 print:hidden">
-        <Button onClick={handlePrint}>
-            <Printer className="mr-2 h-4 w-4" /> Print Bill
-        </Button>
-      </div>
-    </div>
+    </>
   );
 };
 
