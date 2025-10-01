@@ -6,6 +6,8 @@ import React, { createContext, useContext, useState, useMemo } from 'react';
 interface CartContextType {
   cartItems: CartItem[];
   orderedItems: CartItem[];
+  tableNumber: string | null;
+  setTableNumber: (table: string) => void;
   addToCart: (item: MenuItem, quantity?: number) => void;
   updateQuantity: (itemId: number, quantity: number) => void;
   removeFromCart: (itemId: number) => void;
@@ -26,6 +28,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [orderedItems, setOrderedItems] = useState<CartItem[]>([]);
   const [isCartAnimating, setIsCartAnimating] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [tableNumber, setTableNumber] = useState<string | null>(null);
 
   const addToCart = (item: MenuItem, quantity: number = 1) => {
     setCartItems(prevItems => {
@@ -57,6 +60,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   };
   
   const placeOrder = () => {
+    // Here you would typically send the order to a backend
+    console.log(`Placing order for table ${tableNumber}:`, cartItems);
+    
     setOrderedItems(prevOrdered => {
         const newOrdered = [...prevOrdered];
         cartItems.forEach(cartItem => {
@@ -96,6 +102,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const value = {
     cartItems,
     orderedItems,
+    tableNumber,
+    setTableNumber,
     addToCart,
     updateQuantity,
     removeFromCart,

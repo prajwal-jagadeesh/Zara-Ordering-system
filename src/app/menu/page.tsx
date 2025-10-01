@@ -8,6 +8,7 @@ import { PlaceHolderImages, type ImagePlaceholder } from '@/lib/placeholder-imag
 import { useCart } from '@/components/cart/cart-context';
 import Header from '@/components/layout/header';
 import { Button } from '@/components/ui/button';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 async function getMenuItems(): Promise<MenuItem[]> {
     const imageMap = new Map<string, ImagePlaceholder>();
@@ -26,10 +27,19 @@ async function getMenuItems(): Promise<MenuItem[]> {
 }
 
 export default function MenuPage() {
-  // This is a client component, but we are fetching data on the server.
-  // This is a temporary workaround until we move to a proper API.
   const [menuItems, setMenuItems] = React.useState<MenuItem[]>([]);
-  const { totalItems, totalPrice, setIsCartOpen } = useCart();
+  const { totalItems, totalPrice, setIsCartOpen, setTableNumber } = useCart();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  React.useEffect(() => {
+    const table = searchParams.get('table');
+    if (table) {
+      setTableNumber(table);
+    } else {
+      router.push('/');
+    }
+  }, [searchParams, setTableNumber, router]);
   
   React.useEffect(() => {
     getMenuItems().then(setMenuItems);

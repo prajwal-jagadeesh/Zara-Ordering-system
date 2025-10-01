@@ -6,7 +6,7 @@ import { useCart } from '@/components/cart/cart-context';
 import { CartSheet } from '@/components/cart/cart-sheet';
 
 export default function Header() {
-  const { totalItems, setIsCartOpen } = useCart();
+  const { totalItems, setIsCartOpen, tableNumber } = useCart();
 
   return (
     <>
@@ -17,7 +17,7 @@ export default function Header() {
           </Link>
           <div className="text-center">
             <h1 className="font-bold text-lg">Nikee's Zara</h1>
-            <p className="text-xs text-muted-foreground">TABLE 14</p>
+            {tableNumber && <p className="text-xs text-muted-foreground">TABLE {tableNumber}</p>}
           </div>
           <button className="p-2" onClick={() => setIsCartOpen(true)}>
             <User className="h-6 w-6" />
