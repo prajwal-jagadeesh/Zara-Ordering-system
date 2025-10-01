@@ -260,9 +260,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   
   const closeOrder = (tableId: string) => {
     setOrders(prev => prev.filter(o => o.tableId !== tableId));
-    if (tableNumber === tableId) {
-        clearCart();
-    }
   };
 
 
