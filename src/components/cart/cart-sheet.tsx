@@ -34,7 +34,7 @@ const CartItemRow = ({ item, isOrdered }: { item: CartItem, isOrdered: boolean }
                 <div className="flex-1">
                 <p className="font-semibold">{item.name}</p>
                 <p className="text-sm text-muted-foreground">{item.description}</p>
-                <p className="text-sm font-bold">AED {item.price.toFixed(2)}</p>
+                <p className="text-sm font-bold">₹{item.price.toFixed(2)}</p>
                 </div>
             </div>
             {!isOrdered && (
@@ -112,7 +112,7 @@ export function CartSheet() {
                  <p className='text-xs text-muted-foreground text-center'>note all prices are inclusive of 5% VAT</p>
                 <div className="flex justify-between font-bold text-lg">
                   <span>{allItems.length} ITEM/S IN CART</span>
-                  <span>AED {totalPrice.toFixed(2)}</span>
+                  <span>₹{totalPrice.toFixed(2)}</span>
                 </div>
                 <Button size="lg" className="w-full h-12 text-lg" disabled={isPlacingOrder || cartItems.length === 0} onClick={handlePlaceOrder}>
                   {isPlacingOrder ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : 'Place Order'}

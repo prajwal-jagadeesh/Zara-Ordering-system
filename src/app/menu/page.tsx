@@ -47,7 +47,7 @@ export default function MenuPage() {
             <div className="container mx-auto flex justify-between items-center">
                 <div>
                     <p className="font-bold">{totalItems} Item/s in Cart</p>
-                    <p className="text-sm">AED {totalPrice.toFixed(2)}</p>
+                    <p className="text-sm">₹{totalPrice.toFixed(2)}</p>
                 </div>
                 <Button onClick={() => setIsCartOpen(true)} className="bg-black text-white rounded-md">
                     View Cart &raquo;
