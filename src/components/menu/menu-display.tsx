@@ -33,32 +33,39 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const category = entry.target.id.replace(/-/g, ' ').replace(/&/g, 'and') as MenuCategory;
-            setActiveCategory(category);
+    const handleScroll = () => {
+      const yOffset = -130; // Account for sticky header
+      const scrollPosition = window.scrollY - yOffset;
+      
+      let currentCategory: MenuCategory | null = null;
+      
+      for (const category of availableCategories) {
+        const categoryId = category.replace(/ /g, '-').replace(/&/g, 'and');
+        const element = categoryRefs.current[categoryId];
+        if (element) {
+          if (element.offsetTop <= scrollPosition) {
+            currentCategory = category;
+          } else {
+            break;
           }
-        });
-      },
-      {
-        rootMargin: '-120px 0px -50% 0px',
-        threshold: 0,
+        }
       }
-    );
-  
-    const refs = Object.values(categoryRefs.current);
-    refs.forEach((ref) => {
-      if (ref) observer.observe(ref);
-    });
-  
-    return () => {
-      refs.forEach((ref) => {
-        if (ref) observer.unobserve(ref);
-      });
+      
+      if (currentCategory && currentCategory !== activeCategory) {
+        setActiveCategory(currentCategory);
+      } else if (!currentCategory && availableCategories.length > 0) {
+        // If nothing is matched (i.e. at the very top), default to first category
+        setActiveCategory(availableCategories[0]);
+      }
     };
-  }, [categoryRefs, availableCategories]);
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Initial check
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [availableCategories, activeCategory]);
   
 
   return (
@@ -74,13 +81,14 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
                       href={`#${categoryId}`}
                       onClick={(e) => {
                         e.preventDefault();
-                        setActiveCategory(category);
                         const element = document.getElementById(categoryId);
                         if(element) {
                             const yOffset = -120; 
                             const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
                             window.scrollTo({top: y, behavior: 'smooth'});
                         }
+                        // Manually set for instant feedback
+                        setActiveCategory(category);
                       }}
                       className={cn(
                           "flex flex-col items-center space-y-1 flex-shrink-0 px-4 py-2 rounded-full",
