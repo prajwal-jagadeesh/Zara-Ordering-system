@@ -28,7 +28,7 @@ async function getMenuItems(): Promise<MenuItem[]> {
 
 export default function MenuPage() {
   const [menuItems, setMenuItems] = React.useState<MenuItem[]>([]);
-  const { totalItems, totalPrice, setIsCartOpen, setTableNumber } = useCart();
+  const { cartItems, orders, tableNumber, totalPrice, setIsCartOpen, setTableNumber } = useCart();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -44,6 +44,16 @@ export default function MenuPage() {
   React.useEffect(() => {
     getMenuItems().then(setMenuItems);
   }, []);
+  
+  const currentOrder = orders.find(o => o.tableId === tableNumber);
+  const totalItemsInCart = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const totalItemsInOrder = currentOrder?.items.reduce((acc, item) => acc + item.quantity, 0) || 0;
+  const combinedTotalItems = totalItemsInCart;
+
+  const totalCartPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const totalOrderPrice = currentOrder?.items.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0;
+  const combinedPrice = totalCartPrice + totalOrderPrice;
+
 
   return (
     <div className="bg-background min-h-screen">
@@ -52,15 +62,15 @@ export default function MenuPage() {
         <MenuDisplay menuItems={menuItems} />
       </div>
       
-      {totalItems > 0 && (
+      {(totalItemsInCart > 0 || totalItemsInOrder > 0) && (
         <div className="sticky bottom-0 left-0 right-0 bg-background border-t p-3 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]">
             <div className="container mx-auto flex justify-between items-center">
                 <div>
-                    <p className="font-bold">{totalItems} Item/s in Cart</p>
-                    <p className="text-sm">₹{totalPrice.toFixed(2)}</p>
+                    <p className="font-bold">{totalItemsInCart + totalItemsInOrder} Item/s in Cart</p>
+                    <p className="text-sm">₹{combinedPrice.toFixed(2)}</p>
                 </div>
                 <Button onClick={() => setIsCartOpen(true)} className="bg-black text-white rounded-md">
-                    View Cart &raquo;
+                    View Order &raquo;
                 </Button>
             </div>
         </div>

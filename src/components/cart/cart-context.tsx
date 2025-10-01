@@ -30,7 +30,13 @@ const getFromStorage = (key: string) => {
   if (typeof window !== 'undefined') {
     const item = window.localStorage.getItem(key);
     try {
-      return item ? JSON.parse(item) : [];
+      if (!item) return [];
+      const parsed = JSON.parse(item);
+      // Make sure orderTime is a Date object
+      return parsed.map((order: any) => ({
+        ...order,
+        orderTime: new Date(order.orderTime),
+      }))
     } catch (e) {
       console.error(e);
       return [];
@@ -55,8 +61,10 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [tableNumber, setTableNumber] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleStorageChange = () => {
-      setOrders(getFromStorage('orders'));
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'orders') {
+        setOrders(getFromStorage('orders'));
+      }
     };
 
     window.addEventListener('storage', handleStorageChange);
@@ -103,23 +111,31 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     if (!tableNumber || cartItems.length === 0) return;
 
     setOrders(prevOrders => {
-        const existingOrderIndex = prevOrders.findIndex(o => o.tableId === tableNumber && o.status === 'pending');
+        const existingOrderIndex = prevOrders.findIndex(o => o.tableId === tableNumber);
         if (existingOrderIndex > -1) {
             const updatedOrders = [...prevOrders];
             const existingOrder = updatedOrders[existingOrderIndex];
             
-            const newItems = cartItems.map(cartItem => {
-                const existingItem = existingOrder.items.find(item => item.id === cartItem.id);
-                if (existingItem) {
-                    return { ...existingItem, quantity: existingItem.quantity + cartItem.quantity };
+            const updatedItems = [...existingOrder.items];
+
+            cartItems.forEach(cartItem => {
+                const existingItemIndex = updatedItems.findIndex(item => item.id === cartItem.id);
+                if (existingItemIndex > -1) {
+                    updatedItems[existingItemIndex] = {
+                        ...updatedItems[existingItemIndex],
+                        quantity: updatedItems[existingItemIndex].quantity + cartItem.quantity
+                    };
+                } else {
+                    updatedItems.push(cartItem);
                 }
-                return cartItem;
             });
             
-            const itemIdsInCart = cartItems.map(ci => ci.id);
-            const itemsNotInCart = existingOrder.items.filter(item => !itemIdsInCart.includes(item.id));
-            
-            existingOrder.items = [...itemsNotInCart, ...newItems];
+            updatedOrders[existingOrderIndex] = {
+                ...existingOrder,
+                items: updatedItems,
+                status: 'pending' // Reset to pending when new items are added
+            };
+
             return updatedOrders;
 
         } else {
@@ -137,8 +153,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const clearCart = () => {
-    if(!tableNumber) return;
-    setOrders(prevOrders => prevOrders.filter(o => o.tableId !== tableNumber));
     setCartItems([]);
   };
   
@@ -154,22 +168,21 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         orderedQuantity = orderItem?.quantity || 0;
     }
     
-    return (cartItem?.quantity || 0) + orderedQuantity;
+    const cartQuantity = cartItems.find(i => i.id === itemId)?.quantity || 0;
+    return cartQuantity;
   };
 
   const currentOrder = useMemo(() => orders.find(o => o.tableId === tableNumber), [orders, tableNumber]);
 
   const totalItems = useMemo(() => {
     const cartTotal = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-    const orderTotal = currentOrder?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
-    return cartTotal + orderTotal;
-  }, [cartItems, currentOrder]);
+    return cartTotal;
+  }, [cartItems]);
 
   const totalPrice = useMemo(() => {
     const cartTotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const orderTotal = currentOrder?.items.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0;
-    return cartTotal + orderTotal;
-  }, [cartItems, currentOrder]);
+    return cartTotal;
+  }, [cartItems]);
 
   const confirmOrder = (tableId: string) => {
     setOrders(prev => prev.map(o => o.tableId === tableId ? { ...o, status: 'confirmed' } : o));

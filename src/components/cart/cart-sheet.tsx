@@ -12,17 +12,15 @@ import { Button } from '@/components/ui/button';
 import { useCart } from './cart-context';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Minus, Plus, Trash2, Loader2, ChefHat } from 'lucide-react';
+import { Minus, Plus, Loader2, ChefHat } from 'lucide-react';
 import React from 'react';
 import Image from 'next/image';
 import type { CartItem } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
 
 const CartItemRow = ({ item, isOrdered }: { item: CartItem, isOrdered: boolean }) => {
     const { updateQuantity, removeFromCart, tableNumber, orders } = useCart();
     
-    const currentOrder = orders.find(o => o.tableId === tableNumber);
-    const isConfirmed = currentOrder?.status === 'confirmed';
-
     return (
         <div className="flex items-center justify-between space-x-2">
             <div className="flex items-center space-x-4 flex-1">
@@ -61,8 +59,9 @@ const CartItemRow = ({ item, isOrdered }: { item: CartItem, isOrdered: boolean }
 }
 
 export function CartSheet() {
-  const { cartItems, orders, tableNumber, totalPrice, placeOrder, isCartOpen, setIsCartOpen, clearCart } = useCart();
+  const { cartItems, orders, tableNumber, placeOrder, isCartOpen, setIsCartOpen, clearCart } = useCart();
   const [isPlacingOrder, setIsPlacingOrder] = React.useState(false);
+  const { toast } = useToast();
 
   const handlePlaceOrder = () => {
     if (cartItems.length === 0) return;
@@ -70,6 +69,11 @@ export function CartSheet() {
     setTimeout(() => {
       placeOrder();
       setIsPlacingOrder(false);
+      setIsCartOpen(false);
+      toast({
+        title: "Order Updated",
+        description: "Your new items have been sent to the kitchen.",
+      })
     }, 1000);
   }
 
@@ -77,21 +81,9 @@ export function CartSheet() {
   const orderedItems = currentOrder?.items || [];
   const isConfirmed = currentOrder?.status === 'confirmed';
 
-  const allItems = [
-      ...orderedItems, 
-      ...cartItems.filter(ci => !orderedItems.some(oi => oi.id === ci.id))
-    ].map(item => {
-        const cartItem = cartItems.find(ci => ci.id === item.id);
-        const orderedItem = orderedItems.find(oi => oi.id === item.id);
-        return {
-            ...item,
-            quantity: (cartItem?.quantity || 0) + (orderedItem?.quantity || 0)
-        }
-    }).filter((item, index, self) => index === self.findIndex(t => t.id === item.id));
-
-    const totalOrderPrice = orderedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const totalCartPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const combinedPrice = totalOrderPrice + totalCartPrice;
+  const totalCartPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalOrderPrice = orderedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const combinedPrice = totalOrderPrice + totalCartPrice;
 
 
   return (
@@ -99,7 +91,7 @@ export function CartSheet() {
       <SheetContent className="flex w-full flex-col p-0 sm:max-w-lg bg-background text-foreground">
         <SheetHeader className="p-6 pb-2 flex-row justify-between items-center">
           <SheetTitle className="font-bold text-xl">YOUR ORDER</SheetTitle>
-          <Button variant="link" onClick={clearCart} className="text-destructive">Clear All</Button>
+          <Button variant="link" onClick={clearCart} className="text-destructive">Clear New Items</Button>
         </SheetHeader>
         <Separator />
         {(orderedItems.length > 0 || cartItems.length > 0) ? (
@@ -120,7 +112,7 @@ export function CartSheet() {
                   <>
                     <h3 className="text-base font-semibold flex items-center gap-2">
                         <ChefHat size={20} />
-                        {isConfirmed ? "Order is Confirmed" : "Waiting for confirmation"}
+                        {currentOrder?.status === 'confirmed' ? "Order is Confirmed" : (currentOrder?.status === 'pending' ? "Waiting for confirmation" : "Order Placed")}
                     </h3>
                     {orderedItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={true} />)}
                   </>

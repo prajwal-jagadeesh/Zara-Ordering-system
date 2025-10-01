@@ -11,8 +11,25 @@ interface MenuItemCardProps {
 }
 
 export function MenuItemCard({ item }: MenuItemCardProps) {
-  const { addToCart, updateQuantity, getItemQuantity } = useCart();
-  const quantity = getItemQuantity(item.id);
+  const { cartItems, addToCart, updateQuantity, getItemQuantity, orders, tableNumber } = useCart();
+  
+  const currentOrder = orders.find(o => o.tableId === tableNumber);
+  const orderedItem = currentOrder?.items.find(i => i.id === item.id);
+  const cartItem = cartItems.find(i => i.id === item.id);
+  
+  const quantityInCart = cartItem?.quantity || 0;
+  const quantityOrdered = orderedItem?.quantity || 0;
+  const totalQuantity = quantityInCart + quantityOrdered;
+
+  const handleUpdateQuantity = (newQuantity: number) => {
+    const quantityInCart = cartItems.find(i => i.id === item.id)?.quantity || 0;
+    const change = newQuantity - totalQuantity;
+    updateQuantity(item.id, quantityInCart + change);
+  };
+  
+  const handleAddToCart = () => {
+    addToCart(item);
+  }
 
   return (
     <div className="flex items-start space-x-4">
@@ -32,22 +49,23 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
         <p className="text-md font-medium mt-1">₹{item.price.toFixed(2)}</p>
       </div>
       <div className="flex-shrink-0">
-        {quantity > 0 ? (
+        {totalQuantity > 0 ? (
           <div className="flex items-center gap-1">
             <Button
               variant="outline"
               size="icon"
               className="h-8 w-8 rounded-full bg-card"
-              onClick={() => updateQuantity(item.id, quantity - 1)}
+              onClick={() => handleUpdateQuantity(totalQuantity - 1)}
+              disabled={quantityInCart <= 0 && quantityOrdered > 0}
             >
               <Minus className="h-4 w-4" />
             </Button>
-            <span className="w-8 text-center font-bold text-lg">{quantity}</span>
+            <span className="w-8 text-center font-bold text-lg">{totalQuantity}</span>
             <Button
               variant="outline"
               size="icon"
               className="h-8 w-8 rounded-full bg-card"
-              onClick={() => updateQuantity(item.id, quantity + 1)}
+              onClick={() => handleUpdateQuantity(totalQuantity + 1)}
             >
               <Plus className="h-4 w-4" />
             </Button>
@@ -56,7 +74,7 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
           <Button
             variant="outline"
             className="rounded-md px-6"
-            onClick={() => addToCart(item)}
+            onClick={handleAddToCart}
           >
             ADD
           </Button>
