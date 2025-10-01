@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Bell, Check, X, ChefHat } from 'lucide-react';
+import { Bell, Check, X, ChefHat, Loader2 } from 'lucide-react';
 import CaptainHeader from './_components/captain-header';
 import type { Order } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
@@ -59,6 +59,23 @@ const OrderCard = ({ order }: {order: Order}) => {
 
 export default function CaptainPage() {
     const { orders } = useCart();
+    const [isClient, setIsClient] = React.useState(false);
+
+    React.useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) {
+        return (
+             <div className="bg-background min-h-screen">
+                <CaptainHeader />
+                <div className="flex flex-1 justify-center items-center h-[calc(100vh-4rem)]">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                </div>
+            </div>
+        );
+    }
+    
     const pendingOrders = orders.filter(o => o.status === 'pending');
     const confirmedOrders = orders.filter(o => o.status === 'confirmed');
 
