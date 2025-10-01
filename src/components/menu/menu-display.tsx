@@ -48,7 +48,7 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
   
   const handleCategoryClick = (category: MenuCategory) => {
     setActiveCategory(category);
-    const element = document.getElementById(category);
+    const element = document.getElementById(category.replace(/ /g, '-'));
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -81,7 +81,7 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
 
       <div className="mt-4">
         {availableCategories.map(category => (
-            <div key={category} id={category}>
+            <div key={category} id={category.replace(/ /g, '-')}>
                 <h2 className="font-bold text-2xl my-6">{category}</h2>
                 <div className="flex flex-col gap-4">
                     {itemsByCategory[category].map(item => (
