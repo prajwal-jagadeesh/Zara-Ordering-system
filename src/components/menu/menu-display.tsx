@@ -3,7 +3,6 @@
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import type { MenuItem, MenuCategory } from '@/lib/types';
 import { MenuItemCard } from './menu-item-card';
-import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -12,21 +11,6 @@ import Link from 'next/link';
 interface MenuDisplayProps {
   menuItems: MenuItem[];
 }
-
-const CategoryImage = ({ category, imageUrl }: { category: MenuCategory, imageUrl?: string }) => {
-    if (!imageUrl) return <div className="w-20 h-20 bg-muted rounded-md" />;
-
-    return (
-         <Image src={imageUrl} alt={category} width={80} height={80} className="w-20 h-20 object-cover rounded-md" />
-    )
-}
-
-const categoryImages: Partial<Record<MenuCategory, string>> = {
-  'Appetizers': 'https://picsum.photos/seed/appetizers-cat/80/80',
-  'Platters': 'https://picsum.photos/seed/platters-cat/80/80',
-  'Entree Dishes': 'https://picsum.photos/seed/entree-cat/80/80',
-};
-
 
 export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
   const allCategories: MenuCategory[] = [
@@ -98,20 +82,17 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
                         setActiveCategory(category);
                         const element = document.getElementById(categoryId);
                         if(element) {
-                            const yOffset = -220; 
+                            const yOffset = -120; 
                             const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
                             window.scrollTo({top: y, behavior: 'smooth'});
                         }
                       }}
                       className={cn(
-                          "flex flex-col items-center space-y-2 flex-shrink-0 w-24",
-                          activeCategory === category ? "border-b-2 border-primary" : ""
+                          "flex flex-col items-center space-y-1 flex-shrink-0 px-4 py-2 rounded-full",
+                          activeCategory === category ? "bg-primary text-primary-foreground" : "bg-muted"
                       )}
                     >
-                      <div className="w-20 h-20 rounded-md bg-muted overflow-hidden">
-                        <CategoryImage category={category} imageUrl={categoryImages[category]} />
-                      </div>
-                      <span className="text-xs font-medium whitespace-normal text-center w-full">{category}</span>
+                      <span className="text-sm font-medium whitespace-normal text-center">{category}</span>
                     </Link>
                   )
                 })}
@@ -128,9 +109,9 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
                 key={category} 
                 id={categoryId}
                 ref={el => categoryRefs.current[categoryId] = el}
-                className="scroll-mt-48 pt-8">
+                className="scroll-mt-32 pt-8">
                   <h2 className="font-bold text-2xl my-6">{category}</h2>
-                  <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-6">
                       {itemsByCategory[category].map(item => (
                           <MenuItemCard key={item.id} item={item} />
                       ))}

@@ -4,23 +4,16 @@ import React from 'react';
 import { menuData } from '@/lib/menu-data';
 import type { MenuItem } from '@/lib/types';
 import MenuDisplay from '@/components/menu/menu-display';
-import { PlaceHolderImages, type ImagePlaceholder } from '@/lib/placeholder-images';
 import { useCart } from '@/components/cart/cart-context';
 import Header from '@/components/layout/header';
 import { Button } from '@/components/ui/button';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 async function getMenuItems(): Promise<MenuItem[]> {
-    const imageMap = new Map<string, ImagePlaceholder>();
-    PlaceHolderImages.forEach(p => imageMap.set(p.id, p));
-
     return menuData.map(item => {
         const imageId = item.name.toLowerCase().replace(/ /g, '-').replace(/&/g, 'and');
-        const placeholder = imageMap.get(imageId);
         return {
             ...item,
-            imageUrl: placeholder?.imageUrl,
-            imageHint: placeholder?.imageHint,
             imageId: imageId,
         };
     });

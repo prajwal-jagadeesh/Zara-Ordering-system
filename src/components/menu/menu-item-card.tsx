@@ -5,7 +5,6 @@ import type { MenuItem } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { useCart } from '@/components/cart/cart-context';
 import { Minus, Plus } from 'lucide-react';
-import Image from 'next/image';
 
 interface MenuItemCardProps {
   item: MenuItem;
@@ -28,16 +27,6 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
 
   return (
     <div className="flex items-start space-x-4">
-      {item.imageUrl && (
-        <Image
-          src={item.imageUrl}
-          alt={item.name}
-          width={80}
-          height={80}
-          className="w-20 h-20 rounded-md object-cover"
-          data-ai-hint={item.imageHint}
-        />
-      )}
       <div className="flex-grow">
         <h3 className="font-semibold text-lg">{item.name}</h3>
         <p className="text-sm text-muted-foreground">{item.description}</p>

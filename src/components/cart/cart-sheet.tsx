@@ -14,28 +14,18 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Minus, Plus, Loader2, ChefHat, Bell } from 'lucide-react';
 import React from 'react';
-import Image from 'next/image';
 import type { CartItem } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
-const CartItemRow = ({ item, isOrdered, isConfirmed }: { item: CartItem, isOrdered: boolean, isConfirmed: boolean }) => {
-    const { updateQuantity, removeFromCart, tableNumber, orders } = useCart();
+const CartItemRow = ({ item, isOrdered }: { item: CartItem, isOrdered: boolean }) => {
+    const { updateQuantity } = useCart();
     
     return (
         <div className="flex items-center justify-between space-x-2">
             <div className="flex items-center space-x-4 flex-1">
-                {item.imageUrl && (
-                <Image
-                    src={item.imageUrl}
-                    alt={item.name}
-                    width={64}
-                    height={64}
-                    className="rounded-md object-cover w-16 h-16"
-                />
-                )}
                 <div className="flex-1">
-                <p className="font-semibold">{item.name}</p>
-                <p className="text-sm font-bold">₹{item.price.toFixed(2)}</p>
+                    <p className="font-semibold">{item.name}</p>
+                    <p className="text-sm font-bold">₹{item.price.toFixed(2)}</p>
                 </div>
             </div>
             
@@ -103,7 +93,7 @@ export function CartSheet() {
                 {cartItems.length > 0 && (
                     <>
                         <h3 className="text-base font-semibold">New Items</h3>
-                        {cartItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={false} isConfirmed={false} />)}
+                        {cartItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={false} />)}
                     </>
                 )}
                 
@@ -115,7 +105,7 @@ export function CartSheet() {
                         <Bell size={20} />
                         Waiting for confirmation
                     </h3>
-                    {pendingItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={true} isConfirmed={false} />)}
+                    {pendingItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={true} />)}
                   </>
                 )}
 
@@ -127,7 +117,7 @@ export function CartSheet() {
                         <ChefHat size={20} />
                         In the Kitchen
                     </h3>
-                    {confirmedItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={true} isConfirmed={true} />)}
+                    {confirmedItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={true} />)}
                   </>
                 )}
               </div>
