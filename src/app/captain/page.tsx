@@ -142,12 +142,10 @@ const OrderCard = ({ order }: {order: Order}) => {
                 )}
                 {isFullyServed && !hasPendingItems && (
                     <div className="flex flex-col sm:flex-row gap-2 w-full">
-                        <Link href={`/bill?tableId=${order.tableId}`} passHref legacyBehavior>
-                           <a target="_blank" className='w-full'>
+                        <Link href={`/bill?tableId=${order.tableId}`} target="_blank" className='w-full'>
                              <Button size="sm" variant="outline" className="w-full">
                                 <FileText className="mr-2 h-4 w-4" /> Generate Bill
                             </Button>
-                           </a>
                         </Link>
                         <Button size="sm" onClick={() => closeOrder(order.tableId)} className="w-full">
                             <CreditCard className="mr-2 h-4 w-4" /> Payment Received
