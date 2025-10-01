@@ -24,7 +24,7 @@ interface CartContextType {
   rejectOrder: (tableId: string) => void;
   serveItem: (tableId: string, itemId: number) => void;
   closeOrder: (tableId: string) => void;
-  markOrderReady: (tableId: string) => void;
+  markItemReady: (tableId: string, itemId: number) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -272,26 +272,25 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setOrders(prev => prev.filter(o => o.tableId !== tableId));
   };
   
-  const markOrderReady = (tableId: string) => {
+  const markItemReady = (tableId: string, itemId: number) => {
     setOrders(prev => prev.map(o => {
       if (o.tableId === tableId) {
-        const readyItems = o.confirmedItems || [];
-        if (readyItems.length === 0) return o;
+        const itemToMark = (o.confirmedItems || []).find(item => item.id === itemId);
+        if (!itemToMark) return o;
 
+        const newConfirmedItems = (o.confirmedItems || []).filter(item => item.id !== itemId);
         const newServedItems = JSON.parse(JSON.stringify(o.servedItems || []));
-        
-        readyItems.forEach(readyItem => {
-          const existingIndex = newServedItems.findIndex((si: CartItem) => si.id === readyItem.id);
-          if (existingIndex > -1) {
-            newServedItems[existingIndex].quantity += readyItem.quantity;
-          } else {
-            newServedItems.push(readyItem);
-          }
-        });
-        
+
+        const existingServedIndex = newServedItems.findIndex((si: CartItem) => si.id === itemToMark.id);
+        if (existingServedIndex > -1) {
+            newServedItems[existingServedIndex].quantity += itemToMark.quantity;
+        } else {
+            newServedItems.push(itemToMark);
+        }
+
         return {
           ...o,
-          confirmedItems: [],
+          confirmedItems: newConfirmedItems,
           servedItems: newServedItems,
         };
       }
@@ -320,7 +319,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     rejectOrder,
     serveItem,
     closeOrder,
-    markOrderReady,
+    markItemReady,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

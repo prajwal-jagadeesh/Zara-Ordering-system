@@ -5,16 +5,15 @@ import { useCart } from '@/components/cart/cart-context';
 import type { Order, CartItem } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
 import KitchenHeader from './_components/kitchen-header';
 
 
 const KitchenOrderCard = ({ order }: { order: Order }) => {
-    const { markOrderReady } = useCart();
+    const { markItemReady } = useCart();
     const confirmedItems = order.confirmedItems || [];
 
-    const handleMarkAsReady = () => {
-        markOrderReady(order.tableId);
+    const handleMarkAsReady = (itemId: number) => {
+        markItemReady(order.tableId, itemId);
     };
 
     return (
@@ -22,26 +21,29 @@ const KitchenOrderCard = ({ order }: { order: Order }) => {
             <div className="bg-green-500 text-white p-2 rounded-t-lg flex justify-between items-center">
                 <h3 className="font-bold">TABLE {order.tableId}</h3>
             </div>
-            <div className="p-4 flex-grow space-y-2">
+            <div className="p-4 flex-grow space-y-3">
                 {confirmedItems.map((item: CartItem) => (
-                    <div key={item.id} className="flex justify-between items-start">
-                        <span className="font-semibold">{item.name}</span>
-                        <span className="bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                            x{item.quantity}
-                        </span>
+                    <div key={item.id} className="flex justify-between items-center">
+                        <div>
+                            <span className="font-semibold">{item.name}</span>
+                            <span className="ml-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                x{item.quantity}
+                            </span>
+                        </div>
+                        <Button
+                            size="sm"
+                            className="bg-green-500 text-white hover:bg-green-600"
+                            onClick={() => handleMarkAsReady(item.id)}>
+                            Ready
+                        </Button>
                     </div>
                 ))}
             </div>
-            <div className="bg-green-500 text-white p-2 rounded-b-lg mt-auto">
-                 <div className='flex justify-between text-xs mb-2'>
+            <div className="bg-gray-100 p-2 rounded-b-lg mt-auto text-center">
+                 <div className='flex justify-between text-xs'>
                     <span>ORDER ACCEPTED AT</span>
                     <span>{new Date(order.orderTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                  </div>
-                <Button 
-                    className="w-full bg-white text-green-500 hover:bg-gray-100"
-                    onClick={handleMarkAsReady}>
-                    MARK AS READY
-                </Button>
             </div>
         </div>
     );
