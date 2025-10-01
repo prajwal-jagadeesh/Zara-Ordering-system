@@ -95,10 +95,7 @@ export default function KitchenPage() {
         );
     }
     
-    const kitchenOrders = orders.filter(o => 
-        o.status === 'confirmed' && 
-        ((o.confirmedItems || []).length > 0 || (o.readyItems || []).length > 0)
-    );
+    const kitchenOrders = orders.filter(o => o.status === 'confirmed');
 
     return (
         <div className="bg-gray-50 min-h-screen">
