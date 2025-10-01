@@ -78,11 +78,8 @@ export function CartSheet() {
   return (
     <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
       <SheetContent className="flex w-full flex-col p-0 sm:max-w-lg bg-background text-foreground">
-        <SheetHeader className="p-6 flex flex-row items-center justify-between">
+        <SheetHeader className="p-6">
           <SheetTitle className="font-bold text-xl">CART</SheetTitle>
-          <SheetClose asChild>
-             <X className="h-5 w-5" />
-          </SheetClose>
         </SheetHeader>
         <Separator />
         {allItems.length > 0 ? (
