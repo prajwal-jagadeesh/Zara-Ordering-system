@@ -52,6 +52,7 @@ const OrderCard = ({ order }: {order: Order}) => {
     }
     
     const isFullyServed = pendingItems.length === 0 && confirmedItems.length === 0 && servedItems.length > 0;
+    const hasPendingItems = pendingItems.length > 0;
 
     return (
         <Card className="w-full">
@@ -104,7 +105,7 @@ const OrderCard = ({ order }: {order: Order}) => {
                 </p>
             </CardContent>
             <CardFooter className="flex justify-end gap-2">
-                 {order.status === 'pending' && (
+                 {hasPendingItems && (
                     <>
                         <Button variant="outline" size="sm" onClick={() => rejectOrder(order.tableId)}>
                             <X className="mr-2 h-4 w-4" /> Reject
@@ -114,7 +115,7 @@ const OrderCard = ({ order }: {order: Order}) => {
                         </Button>
                     </>
                 )}
-                {isFullyServed && (
+                {isFullyServed && !hasPendingItems && (
                     <Button size="sm" onClick={() => closeOrder(order.tableId)} className="w-full">
                         <CreditCard className="mr-2 h-4 w-4" /> Payment Received
                     </Button>
