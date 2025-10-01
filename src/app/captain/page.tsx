@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Bell, Check, X, ChefHat, Loader2, Utensils, CheckCircle2 } from 'lucide-react';
+import { Bell, Check, X, ChefHat, Loader2, Utensils, CheckCircle2, CreditCard } from 'lucide-react';
 import CaptainHeader from './_components/captain-header';
 import type { Order, CartItem } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
@@ -32,7 +32,7 @@ const OrderItemRow = ({ item, onServe, showServeButton, isServed }: { item: Cart
 
 
 const OrderCard = ({ order }: {order: Order}) => {
-    const { confirmOrder, rejectOrder, serveItem } = useCart();
+    const { confirmOrder, rejectOrder, serveItem, closeOrder } = useCart();
 
     const pendingItems = order.pendingItems || [];
     const confirmedItems = order.confirmedItems || [];
@@ -50,13 +50,15 @@ const OrderCard = ({ order }: {order: Order}) => {
     const handleServeItem = (itemId: number) => {
         serveItem(order.tableId, itemId);
     }
+    
+    const isFullyServed = pendingItems.length === 0 && confirmedItems.length === 0 && servedItems.length > 0;
 
     return (
         <Card className="w-full">
             <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-lg">TABLE {order.tableId}</CardTitle>
-                <Badge variant={order.status === 'pending' ? 'destructive' : 'default'}>
-                    {order.status}
+                <Badge variant={order.status === 'pending' ? 'destructive' : isFullyServed ? 'default' : 'outline'}>
+                    {isFullyServed ? 'Completed' : order.status}
                 </Badge>
             </CardHeader>
             <CardContent>
@@ -101,16 +103,23 @@ const OrderCard = ({ order }: {order: Order}) => {
                     Ordered {formatDistanceToNow(new Date(order.orderTime), { addSuffix: true })}
                 </p>
             </CardContent>
-            {order.status === 'pending' && (
-                <CardFooter className="flex justify-end gap-2">
-                    <Button variant="outline" size="sm" onClick={() => rejectOrder(order.tableId)}>
-                        <X className="mr-2 h-4 w-4" /> Reject
+            <CardFooter className="flex justify-end gap-2">
+                 {order.status === 'pending' && (
+                    <>
+                        <Button variant="outline" size="sm" onClick={() => rejectOrder(order.tableId)}>
+                            <X className="mr-2 h-4 w-4" /> Reject
+                        </Button>
+                        <Button size="sm" onClick={() => confirmOrder(order.tableId)}>
+                            <Check className="mr-2 h-4 w-4" /> Confirm
+                        </Button>
+                    </>
+                )}
+                {isFullyServed && (
+                    <Button size="sm" onClick={() => closeOrder(order.tableId)} className="w-full">
+                        <CreditCard className="mr-2 h-4 w-4" /> Payment Received
                     </Button>
-                    <Button size="sm" onClick={() => confirmOrder(order.tableId)}>
-                        <Check className="mr-2 h-4 w-4" /> Confirm
-                    </Button>
-                </CardFooter>
-            )}
+                )}
+            </CardFooter>
         </Card>
     );
 }
@@ -137,25 +146,23 @@ export default function CaptainPage() {
     
     const activeOrders = orders.filter(o => {
         const totalItems = (o.pendingItems || []).length + (o.confirmedItems || []).length + (o.servedItems || []).length;
-        const servedItemsCount = (o.servedItems || []).length;
-        
-        // An order is active if it has items and not all of them have been served.
-        // It's also active if there are pending items needing confirmation.
-        const allItems = [
-            ...(o.pendingItems || []),
-            ...(o.confirmedItems || []),
-            ...(o.servedItems || [])
-        ];
-        const allConfirmedOrPendingItems = [
-            ...(o.pendingItems || []),
-            ...(o.confirmedItems || [])
-        ];
-
-        return allConfirmedOrPendingItems.length > 0;
+        return totalItems > 0;
     });
 
     const pendingOrders = activeOrders.filter(o => o.status === 'pending');
-    const confirmedOrders = activeOrders.filter(o => o.status === 'confirmed' && (o.pendingItems || []).length === 0);
+    
+    const inProgressOrders = activeOrders.filter(o => 
+        o.status === 'confirmed' && 
+        ((o.pendingItems || []).length > 0 || (o.confirmedItems || []).length > 0)
+    );
+    
+    const completedOrders = activeOrders.filter(o => 
+        o.status === 'confirmed' && 
+        (o.pendingItems || []).length === 0 && 
+        (o.confirmedItems || []).length === 0 &&
+        (o.servedItems || []).length > 0
+    );
+
 
     return (
         <div className="bg-background min-h-screen">
@@ -171,11 +178,20 @@ export default function CaptainPage() {
                     </div>
                 )}
                 
-                {confirmedOrders.length > 0 && (
+                {inProgressOrders.length > 0 && (
                      <div className="mb-8">
-                        <h2 className="text-xl font-bold mb-4 flex items-center gap-2"><ChefHat /> Confirmed Orders</h2>
+                        <h2 className="text-xl font-bold mb-4 flex items-center gap-2"><ChefHat /> In Progress</h2>
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                            {confirmedOrders.map(order => <OrderCard key={`${order.tableId}-${order.orderTime}`} order={order} />)}
+                            {inProgressOrders.map(order => <OrderCard key={`${order.tableId}-${order.orderTime}`} order={order} />)}
+                        </div>
+                    </div>
+                )}
+
+                {completedOrders.length > 0 && (
+                     <div className="mb-8">
+                        <h2 className="text-xl font-bold mb-4 flex items-center gap-2"><CheckCircle2 className="text-green-600" /> Ready for Payment</h2>
+                        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                            {completedOrders.map(order => <OrderCard key={`${order.tableId}-${order.orderTime}`} order={order} />)}
                         </div>
                     </div>
                 )}

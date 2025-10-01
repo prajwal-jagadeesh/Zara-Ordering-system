@@ -23,6 +23,7 @@ interface CartContextType {
   confirmOrder: (tableId: string) => void;
   rejectOrder: (tableId: string) => void;
   serveItem: (tableId: string, itemId: number) => void;
+  closeOrder: (tableId: string) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -161,11 +162,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   };
   
   const getItemQuantity = (itemId: number) => {
-    const cartItem = cartItems.find(i => i.id === itemId);
-    return cartItem?.quantity || 0;
-  };
-  
-  const getTotalItemQuantity = (itemId: number) => {
     if(!tableNumber) return 0;
     
     const order = orders.find(o => o.tableId === tableNumber);
@@ -258,6 +254,13 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       })
     );
   };
+  
+  const closeOrder = (tableId: string) => {
+    setOrders(prev => prev.filter(o => o.tableId !== tableId));
+    if (tableNumber === tableId) {
+        clearCart();
+    }
+  };
 
 
   const value = {
@@ -275,10 +278,11 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     isCartAnimating,
     isCartOpen,
     setIsCartOpen,
-    getItemQuantity: getTotalItemQuantity,
+    getItemQuantity: getItemQuantity,
     confirmOrder,
     rejectOrder,
     serveItem,
+    closeOrder,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
