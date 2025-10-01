@@ -35,29 +35,24 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        for (const entry of entries) {
+        entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            const category = entry.target.id.replace(/-/g, ' ') as MenuCategory;
-            // Check if the element is in the top part of the viewport
-            const rect = entry.boundingClientRect;
-            if (rect.top >= 0 && rect.top <= 250) { // Increased buffer
-              setActiveCategory(category);
-              break; // Stop after finding the first matching category from the top
-            }
+            const category = entry.target.id.replace(/-/g, ' ').replace(/&/g, 'and') as MenuCategory;
+            setActiveCategory(category);
           }
-        }
+        });
       },
-      { 
-        rootMargin: '0px 0px -80% 0px',
-        threshold: 0.1,
-      } 
+      {
+        rootMargin: '-120px 0px -75% 0px',
+        threshold: 0,
+      }
     );
-
+  
     const refs = Object.values(categoryRefs.current);
     refs.forEach((ref) => {
       if (ref) observer.observe(ref);
     });
-
+  
     return () => {
       refs.forEach((ref) => {
         if (ref) observer.unobserve(ref);
@@ -72,7 +67,7 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
             <ScrollArea className="w-full whitespace-nowrap">
                 <div className="flex space-x-4 pb-2">
                 {availableCategories.map(category => {
-                  const categoryId = category.replace(/ /g, '-');
+                  const categoryId = category.replace(/ /g, '-').replace(/&/g, 'and');
                   return (
                     <Link
                       key={category}
@@ -103,7 +98,7 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
 
       <div className="mt-4">
         {availableCategories.map(category => {
-            const categoryId = category.replace(/ /g, '-');
+            const categoryId = category.replace(/ /g, '-').replace(/&/g, 'and');
             return (
               <div 
                 key={category} 
