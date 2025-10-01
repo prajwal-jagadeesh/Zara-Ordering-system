@@ -50,7 +50,14 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
     setActiveCategory(category);
     const element = document.getElementById(category.replace(/ /g, '-'));
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const headerOffset = 80; // height of sticky header + some padding
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      
+      window.scrollTo({
+         top: offsetPosition,
+         behavior: "smooth"
+      });
     }
   };
 
@@ -81,7 +88,7 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
 
       <div className="mt-4">
         {availableCategories.map(category => (
-            <div key={category} id={category.replace(/ /g, '-')}>
+            <div key={category} id={category.replace(/ /g, '-')} className="scroll-mt-24">
                 <h2 className="font-bold text-2xl my-6">{category}</h2>
                 <div className="flex flex-col gap-4">
                     {itemsByCategory[category].map(item => (
