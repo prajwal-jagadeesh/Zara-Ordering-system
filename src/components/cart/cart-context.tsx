@@ -235,9 +235,10 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
             i => i.id !== itemId
           );
           
-          const newServedItems = [...(o.servedItems || [])];
+          // Deep copy to prevent mutation issues
+          const newServedItems = JSON.parse(JSON.stringify(o.servedItems || []));
           const existingServedItemIndex = newServedItems.findIndex(
-            i => i.id === itemId
+            (i: CartItem) => i.id === itemId
           );
 
           if (existingServedItemIndex > -1) {
