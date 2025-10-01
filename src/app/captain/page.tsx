@@ -67,7 +67,7 @@ const OrderCard = ({ order }: {order: Order}) => {
                         <div>
                             <h3 className="font-semibold flex items-center gap-2 mb-2"><Bell className="text-destructive h-4 w-4" /> New Items</h3>
                             <div className="space-y-2">
-                                {pendingItems.map(item => <OrderItemRow key={item.id} item={item} showServeButton={false} />)}
+                                {pendingItems.map(item => <OrderItemRow key={item.id} item={item} showServeButton={false} isServed={false} />)}
                             </div>
                         </div>
                     )}
@@ -77,7 +77,7 @@ const OrderCard = ({ order }: {order: Order}) => {
                         <div>
                             <h3 className="font-semibold flex items-center gap-2 mb-2"><ChefHat className="h-4 w-4" /> In the Kitchen</h3>
                              <div className="space-y-2">
-                                {confirmedItems.map(item => <OrderItemRow key={item.id} item={item} onServe={() => handleServeItem(item.id)} showServeButton={true} />)}
+                                {confirmedItems.map(item => <OrderItemRow key={item.id} item={item} onServe={() => handleServeItem(item.id)} showServeButton={true} isServed={false} />)}
                             </div>
                         </div>
                     )}
@@ -130,6 +130,10 @@ export default function CaptainPage() {
     const [isClient, setIsClient] = React.useState(false);
 
     React.useEffect(() => {
+        const item = localStorage.getItem('orders');
+        if (item) {
+            useCart.setState(state => ({ ...state, orders: JSON.parse(item) }));
+        }
         setIsClient(true);
     }, []);
 

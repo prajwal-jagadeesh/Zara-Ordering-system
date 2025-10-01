@@ -24,6 +24,7 @@ interface CartContextType {
   rejectOrder: (tableId: string) => void;
   serveItem: (tableId: string, itemId: number) => void;
   closeOrder: (tableId: string) => void;
+  markOrderReady: (tableId: string) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -65,8 +66,17 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'orders') {
-        setOrders(getFromStorage('orders'));
+      if (event.key === 'orders' && event.newValue) {
+         try {
+            const parsed = JSON.parse(event.newValue);
+            const newOrders = parsed.map((order: any) => ({
+                ...order,
+                orderTime: new Date(order.orderTime),
+            }));
+            setOrders(newOrders);
+        } catch (e) {
+            console.error("Error parsing orders from storage", e);
+        }
       }
     };
 
@@ -261,6 +271,33 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const closeOrder = (tableId: string) => {
     setOrders(prev => prev.filter(o => o.tableId !== tableId));
   };
+  
+  const markOrderReady = (tableId: string) => {
+    setOrders(prev => prev.map(o => {
+      if (o.tableId === tableId) {
+        const readyItems = o.confirmedItems || [];
+        if (readyItems.length === 0) return o;
+
+        const newServedItems = JSON.parse(JSON.stringify(o.servedItems || []));
+        
+        readyItems.forEach(readyItem => {
+          const existingIndex = newServedItems.findIndex((si: CartItem) => si.id === readyItem.id);
+          if (existingIndex > -1) {
+            newServedItems[existingIndex].quantity += readyItem.quantity;
+          } else {
+            newServedItems.push(readyItem);
+          }
+        });
+        
+        return {
+          ...o,
+          confirmedItems: [],
+          servedItems: newServedItems,
+        };
+      }
+      return o;
+    }))
+  };
 
 
   const value = {
@@ -283,6 +320,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     rejectOrder,
     serveItem,
     closeOrder,
+    markOrderReady,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
