@@ -1,8 +1,8 @@
 
 'use client';
 
-import type { CartItem, MenuItem, Order } from '@/lib/types';
 import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
+import type { CartItem, MenuItem, Order } from '@/lib/types';
 
 interface CartContextType {
   cartItems: CartItem[];
