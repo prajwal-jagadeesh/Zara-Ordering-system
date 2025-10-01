@@ -6,20 +6,26 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Bell, Check, X, ChefHat, Loader2, Utensils } from 'lucide-react';
+import { Bell, Check, X, ChefHat, Loader2, Utensils, CheckCircle2 } from 'lucide-react';
 import CaptainHeader from './_components/captain-header';
 import type { Order, CartItem } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
 
-const OrderItemRow = ({ item, onServe, showServeButton }: { item: CartItem, onServe?: () => void, showServeButton: boolean }) => (
+const OrderItemRow = ({ item, onServe, showServeButton, isServed }: { item: CartItem, onServe?: () => void, showServeButton: boolean, isServed?: boolean }) => (
     <div className="flex justify-between items-center">
         <div>
             <span>{item.name} x {item.quantity}</span>
         </div>
-        {showServeButton && onServe && (
+        {showServeButton && onServe && !isServed && (
             <Button variant="outline" size="sm" onClick={onServe}>
                 <Utensils className="mr-2 h-4 w-4" /> Serve
             </Button>
+        )}
+        {isServed && (
+            <div className="flex items-center gap-2 text-green-600">
+                <CheckCircle2 className="h-4 w-4" />
+                <span>Served</span>
+            </div>
         )}
     </div>
 );
@@ -30,12 +36,16 @@ const OrderCard = ({ order }: {order: Order}) => {
 
     const pendingItems = order.pendingItems || [];
     const confirmedItems = order.confirmedItems || [];
+    const servedItems = order.servedItems || [];
 
     const totalNewItems = pendingItems.reduce((acc, item) => acc + item.quantity, 0);
     const totalConfirmedItems = confirmedItems.reduce((acc, item) => acc + item.quantity, 0);
+    const totalServedItems = servedItems.reduce((acc, item) => acc + item.quantity, 0);
+    
     const totalNewPrice = pendingItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
     const totalConfirmedPrice = confirmedItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    const totalPrice = totalNewPrice + totalConfirmedPrice;
+    const totalServedPrice = servedItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const totalPrice = totalNewPrice + totalConfirmedPrice + totalServedPrice;
     
     const handleServeItem = (itemId: number) => {
         serveItem(order.tableId, itemId);
@@ -59,7 +69,7 @@ const OrderCard = ({ order }: {order: Order}) => {
                             </div>
                         </div>
                     )}
-                     {pendingItems.length > 0 && confirmedItems.length > 0 && <Separator />}
+                     {(pendingItems.length > 0 && (confirmedItems.length > 0 || servedItems.length > 0)) && <Separator />}
 
                     {confirmedItems.length > 0 && (
                         <div>
@@ -70,14 +80,25 @@ const OrderCard = ({ order }: {order: Order}) => {
                         </div>
                     )}
                     
+                    {(confirmedItems.length > 0 && servedItems.length > 0) && <Separator />}
+
+                    {servedItems.length > 0 && (
+                        <div>
+                            <h3 className="font-semibold flex items-center gap-2 mb-2"><CheckCircle2 className="h-4 w-4 text-green-600" /> Served</h3>
+                            <div className="space-y-2">
+                                {servedItems.map(item => <OrderItemRow key={item.id} item={item} showServeButton={false} isServed={true} />)}
+                            </div>
+                        </div>
+                    )}
+                    
                     <Separator />
                     <div className="flex justify-between font-bold">
-                        <span>Total ({totalNewItems + totalConfirmedItems} items)</span>
+                        <span>Total ({totalNewItems + totalConfirmedItems + totalServedItems} items)</span>
                         <span>₹{totalPrice.toFixed(2)}</span>
                     </div>
                 </div>
                  <p className="text-xs text-muted-foreground mt-2">
-                    {formatDistanceToNow(new Date(order.orderTime), { addSuffix: true })}
+                    Ordered {formatDistanceToNow(new Date(order.orderTime), { addSuffix: true })}
                 </p>
             </CardContent>
             {order.status === 'pending' && (
@@ -115,9 +136,22 @@ export default function CaptainPage() {
     }
     
     const activeOrders = orders.filter(o => {
-        const hasPending = (o.pendingItems || []).length > 0;
-        const hasConfirmed = (o.confirmedItems || []).length > 0;
-        return hasPending || hasConfirmed;
+        const totalItems = (o.pendingItems || []).length + (o.confirmedItems || []).length + (o.servedItems || []).length;
+        const servedItemsCount = (o.servedItems || []).length;
+        
+        // An order is active if it has items and not all of them have been served.
+        // It's also active if there are pending items needing confirmation.
+        const allItems = [
+            ...(o.pendingItems || []),
+            ...(o.confirmedItems || []),
+            ...(o.servedItems || [])
+        ];
+        const allConfirmedOrPendingItems = [
+            ...(o.pendingItems || []),
+            ...(o.confirmedItems || [])
+        ];
+
+        return allConfirmedOrPendingItems.length > 0;
     });
 
     const pendingOrders = activeOrders.filter(o => o.status === 'pending');
