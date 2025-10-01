@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'next/link';
+import React from 'react';
 import { ChefHat } from 'lucide-react';
 import { useCart } from '@/components/cart/cart-context';
 import Link from 'next/link';
