@@ -1,7 +1,7 @@
 'use client';
 
 import type { CartItem, MenuItem, Order } from '@/lib/types';
-import React, { createContext, useContext, useState, useMemo } from 'react';
+import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
 
 interface CartContextType {
   cartItems: CartItem[];
@@ -25,12 +25,50 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
+// Helper to get data from localStorage
+const getFromStorage = (key: string) => {
+  if (typeof window !== 'undefined') {
+    const item = window.localStorage.getItem(key);
+    try {
+      return item ? JSON.parse(item) : [];
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
+  }
+  return [];
+};
+
+// Helper to set data in localStorage
+const setInStorage = (key: string, value: any) => {
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  }
+};
+
+
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<Order[]>(() => getFromStorage('orders'));
   const [isCartAnimating, setIsCartAnimating] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [tableNumber, setTableNumber] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setOrders(getFromStorage('orders'));
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    setInStorage('orders', orders);
+  }, [orders]);
+
 
   const addToCart = (item: MenuItem, quantity: number = 1) => {
     setCartItems(prevItems => {

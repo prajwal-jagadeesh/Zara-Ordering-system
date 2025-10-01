@@ -19,5 +19,5 @@ export interface Order {
   tableId: string;
   items: CartItem[];
   status: 'pending' | 'confirmed';
-  orderTime: Date;
+  orderTime: string; // Changed to string to be localStorage-friendly
 }

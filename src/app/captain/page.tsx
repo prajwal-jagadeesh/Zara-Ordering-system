@@ -39,7 +39,7 @@ const OrderCard = ({ order }: {order: Order}) => {
                     </div>
                 </div>
                  <p className="text-xs text-muted-foreground mt-2">
-                    {formatDistanceToNow(order.orderTime, { addSuffix: true })}
+                    {formatDistanceToNow(new Date(order.orderTime), { addSuffix: true })}
                 </p>
             </CardContent>
             {order.status === 'pending' && (
