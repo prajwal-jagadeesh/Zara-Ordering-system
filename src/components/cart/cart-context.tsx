@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { CartItem, MenuItem, Order } from '@/lib/types';
@@ -160,7 +161,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   };
   
   const getItemQuantity = (itemId: number) => {
-    const cartItem = cartItems.find(i => i.id === item.id);
+    const cartItem = cartItems.find(i => i.id === itemId);
     return cartItem?.quantity || 0;
   };
   
@@ -171,10 +172,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     
     const pendingItem = (order?.pendingItems || []).find(i => i.id === itemId);
     const confirmedItem = (order?.confirmedItems || []).find(i => i.id === itemId);
-    const servedItem = (order?.servedItems || []).find(i => i.id === itemId);
     const cartItem = cartItems.find(i => i.id === itemId);
 
-    return (pendingItem?.quantity || 0) + (confirmedItem?.quantity || 0) + (cartItem?.quantity || 0) + (servedItem?.quantity || 0);
+    return (pendingItem?.quantity || 0) + (confirmedItem?.quantity || 0) + (cartItem?.quantity || 0);
   };
 
 

@@ -1,3 +1,4 @@
+
 'use client';
 
 import type { MenuItem } from '@/lib/types';
@@ -13,8 +14,8 @@ interface MenuItemCardProps {
 export function MenuItemCard({ item }: MenuItemCardProps) {
   const { cartItems, addToCart, updateQuantity, getItemQuantity } = useCart();
   
-  const cartItem = cartItems.find(i => i.id === item.id);
   const totalQuantity = getItemQuantity(item.id);
+  const cartItem = cartItems.find(i => i.id === item.id);
   const quantityInCart = cartItem?.quantity || 0;
 
   const handleUpdateQuantity = (newQuantity: number) => {
@@ -53,7 +54,7 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
             >
               <Minus className="h-4 w-4" />
             </Button>
-            <span className="w-8 text-center font-bold text-lg">{totalQuantity}</span>
+            <span className="w-8 text-center font-bold text-lg">{quantityInCart}</span>
             <Button
               variant="outline"
               size="icon"
