@@ -136,7 +136,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
             updatedOrders[existingOrderIndex] = {
                 ...existingOrder,
                 pendingItems: newPendingItems,
-                status: 'pending' // Always set to pending when new items are added
+                status: 'pending', // Always set to pending when new items are added
+                orderTime: new Date(), // Update order time
             };
 
             return updatedOrders;
@@ -185,14 +186,15 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const confirmOrder = (tableId: string) => {
     setOrders(prev => prev.map(o => {
         if (o.tableId === tableId) {
-            const newConfirmedItems = [...(o.confirmedItems || [])];
+            const currentConfirmed = [...(o.confirmedItems || [])];
+            const itemsToConfirm = [...(o.pendingItems || [])];
             
-            (o.pendingItems || []).forEach(pendingItem => {
-                const existingIndex = newConfirmedItems.findIndex(ci => ci.id === pendingItem.id);
+            itemsToConfirm.forEach(pendingItem => {
+                const existingIndex = currentConfirmed.findIndex(ci => ci.id === pendingItem.id);
                 if (existingIndex > -1) {
-                    newConfirmedItems[existingIndex].quantity += pendingItem.quantity;
+                    currentConfirmed[existingIndex].quantity += pendingItem.quantity;
                 } else {
-                    newConfirmedItems.push(pendingItem);
+                    currentConfirmed.push(pendingItem);
                 }
             });
 
@@ -200,7 +202,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
                 ...o, 
                 status: 'confirmed',
                 pendingItems: [],
-                confirmedItems: newConfirmedItems,
+                confirmedItems: currentConfirmed,
                 servedItems: o.servedItems || [],
             };
         }
