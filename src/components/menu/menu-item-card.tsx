@@ -11,25 +11,14 @@ interface MenuItemCardProps {
 }
 
 export function MenuItemCard({ item }: MenuItemCardProps) {
-  const { cartItems, addToCart, updateQuantity, orders, tableNumber } = useCart();
+  const { cartItems, addToCart, updateQuantity, getItemQuantity } = useCart();
   
-  const currentOrder = orders.find(o => o.tableId === tableNumber);
   const cartItem = cartItems.find(i => i.id === item.id);
-  const pendingItem = (currentOrder?.pendingItems || []).find(i => i.id === item.id);
-  const confirmedItem = (currentOrder?.confirmedItems || []).find(i => i.id === item.id);
-  
+  const totalQuantity = getItemQuantity(item.id);
   const quantityInCart = cartItem?.quantity || 0;
-  const quantityPending = pendingItem?.quantity || 0;
-  const quantityConfirmed = confirmedItem?.quantity || 0;
-
-  const totalQuantity = quantityInCart + quantityPending + quantityConfirmed;
 
   const handleUpdateQuantity = (newQuantity: number) => {
-    // Only allow changing items that are in the cart (not yet ordered)
-    if (newQuantity >= (quantityPending + quantityConfirmed)) {
-        const cartQuantity = newQuantity - (quantityPending + quantityConfirmed);
-        updateQuantity(item.id, cartQuantity);
-    }
+    updateQuantity(item.id, newQuantity);
   };
   
   const handleAddToCart = () => {
@@ -60,8 +49,7 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
               variant="outline"
               size="icon"
               className="h-8 w-8 rounded-full bg-card"
-              onClick={() => handleUpdateQuantity(totalQuantity - 1)}
-              disabled={quantityInCart === 0}
+              onClick={() => handleUpdateQuantity(quantityInCart - 1)}
             >
               <Minus className="h-4 w-4" />
             </Button>
@@ -70,7 +58,7 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
               variant="outline"
               size="icon"
               className="h-8 w-8 rounded-full bg-card"
-              onClick={() => handleUpdateQuantity(totalQuantity + 1)}
+              onClick={() => handleUpdateQuantity(quantityInCart + 1)}
             >
               <Plus className="h-4 w-4" />
             </Button>
