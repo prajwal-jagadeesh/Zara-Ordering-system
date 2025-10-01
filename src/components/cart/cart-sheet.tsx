@@ -12,10 +12,10 @@ import { Button } from '@/components/ui/button';
 import { useCart } from './cart-context';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Minus, Plus, Trash2, Loader2, X, ChefHat } from 'lucide-react';
+import { Minus, Plus, Trash2, Loader2, ChefHat } from 'lucide-react';
 import React from 'react';
 import Image from 'next/image';
-import { CartItem } from '@/lib/types';
+import type { CartItem } from '@/lib/types';
 
 const CartItemRow = ({ item, isOrdered }: { item: CartItem, isOrdered: boolean }) => {
     const { updateQuantity, removeFromCart } = useCart();
@@ -33,7 +33,6 @@ const CartItemRow = ({ item, isOrdered }: { item: CartItem, isOrdered: boolean }
                 )}
                 <div className="flex-1">
                 <p className="font-semibold">{item.name}</p>
-                <p className="text-sm text-muted-foreground">{item.description}</p>
                 <p className="text-sm font-bold">₹{item.price.toFixed(2)}</p>
                 </div>
             </div>
