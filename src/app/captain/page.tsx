@@ -147,11 +147,9 @@ const OrderCard = ({ order }: {order: Order}) => {
                                 <FileText className="mr-2 h-4 w-4" /> Generate Bill
                             </Button>
                         </Link>
-                        <Link href={`/bill?tableId=${order.tableId}`} target="_blank" className='w-full'>
-                            <Button size="sm" onClick={() => closeOrder(order.tableId)} className="w-full">
-                                <CreditCard className="mr-2 h-4 w-4" /> Payment Received
-                            </Button>
-                        </Link>
+                        <Button size="sm" onClick={() => closeOrder(order.tableId)} className="w-full">
+                            <CreditCard className="mr-2 h-4 w-4" /> Close & Clear
+                        </Button>
                     </div>
                 )}
             </CardFooter>
@@ -244,3 +242,5 @@ export default function CaptainPage() {
         </div>
     )
 }
+
+    

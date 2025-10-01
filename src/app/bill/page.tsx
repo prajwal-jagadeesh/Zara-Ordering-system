@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useCart } from '@/components/cart/cart-context';
-import type { Order, CartItem } from '@/lib/types';
+import type { Order } from '@/lib/types';
 import { format } from 'date-fns';
 import { Loader2 } from 'lucide-react';
 
@@ -11,44 +11,40 @@ const BillPage = () => {
   const searchParams = useSearchParams();
   const { orders } = useCart();
   const [order, setOrder] = useState<Order | null>(null);
-  const [isClient, setIsClient] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isClient, setIsClient] = useState(false);
 
+  // Ensure component only runs on client
   useEffect(() => {
     setIsClient(true);
   }, []);
   
   useEffect(() => {
-    if (isClient) {
+    // Only run this logic on the client side after orders have been loaded from localStorage.
+    if (isClient && orders.length > 0) {
       const tableId = searchParams.get('tableId');
-      // The orders are loaded from localStorage by the CartProvider.
-      // We need to wait until the orders array is populated.
-      if (tableId && orders.length > 0) {
+      if (tableId) {
         const foundOrder = orders.find(o => o.tableId === tableId);
         setOrder(foundOrder || null);
-        setIsLoading(false);
-        // Automatically trigger print dialog once order is loaded
+        
+        // Automatically trigger print dialog once the correct order is found
         if (foundOrder) {
-            setTimeout(() => window.print(), 500); // Small delay to ensure rendering
+          setTimeout(() => window.print(), 500); // Small delay to ensure rendering
         }
-      } else if (!tableId) {
-        // If there's no tableId in the URL, we can stop loading.
-        setIsLoading(false);
-      } else if (orders.length === 0) {
-        // If there is a tableId but orders haven't loaded yet, we keep loading.
-        // If orders have loaded and it's still 0, the next block will handle it.
-        // We add a timeout to prevent getting stuck if local storage is empty.
-        const timer = setTimeout(() => {
-            if (orders.length === 0) {
-                setIsLoading(false);
-            }
-        }, 2000); // Wait 2 seconds for orders to load.
-        return () => clearTimeout(timer);
       }
-    }
-  }, [searchParams, orders, isClient]);
+      setIsLoading(false); // Stop loading once we've processed the orders
+    } else if (isClient) {
+      // If orders are not yet loaded, we might need to wait, but set a timeout
+      // to prevent getting stuck in a loading state forever if no orders exist.
+      const timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 3000); // Wait 3 seconds for orders to load from storage.
 
-  if (!isClient || isLoading) {
+      return () => clearTimeout(timer);
+    }
+  }, [isClient, orders, searchParams]);
+
+  if (isLoading) {
      return (
         <div className="flex flex-col items-center justify-center min-h-screen text-center font-mono">
             <Loader2 className="h-8 w-8 animate-spin mb-4" />
@@ -170,3 +166,5 @@ const BillPage = () => {
 };
 
 export default BillPage;
+
+    
