@@ -15,8 +15,8 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
   
   const currentOrder = orders.find(o => o.tableId === tableNumber);
   const cartItem = cartItems.find(i => i.id === item.id);
-  const pendingItem = currentOrder?.pendingItems.find(i => i.id === item.id);
-  const confirmedItem = currentOrder?.confirmedItems.find(i => i.id === item.id);
+  const pendingItem = (currentOrder?.pendingItems || []).find(i => i.id === item.id);
+  const confirmedItem = (currentOrder?.confirmedItems || []).find(i => i.id === item.id);
   
   const quantityInCart = cartItem?.quantity || 0;
   const quantityPending = pendingItem?.quantity || 0;
