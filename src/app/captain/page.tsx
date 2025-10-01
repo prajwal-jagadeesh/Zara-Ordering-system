@@ -6,15 +6,26 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Bell, Check, X, ChefHat, Loader2 } from 'lucide-react';
+import { Bell, Check, X, ChefHat, Loader2, Minus, Plus } from 'lucide-react';
 import CaptainHeader from './_components/captain-header';
-import type { Order } from '@/lib/types';
+import type { Order, CartItem } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
+
+const OrderItemRow = ({ item }: { item: CartItem }) => (
+    <div className="flex justify-between">
+        <span>{item.name} x {item.quantity}</span>
+        <span>₹{(item.price * item.quantity).toFixed(2)}</span>
+    </div>
+);
+
 
 const OrderCard = ({ order }: {order: Order}) => {
     const { confirmOrder, rejectOrder } = useCart();
-    const totalItems = order.items.reduce((acc, item) => acc + item.quantity, 0);
-    const totalPrice = order.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const totalNewItems = order.pendingItems.reduce((acc, item) => acc + item.quantity, 0);
+    const totalConfirmedItems = order.confirmedItems.reduce((acc, item) => acc + item.quantity, 0);
+    const totalNewPrice = order.pendingItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const totalConfirmedPrice = order.confirmedItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const totalPrice = totalNewPrice + totalConfirmedPrice;
 
     return (
         <Card className="w-full">
@@ -25,16 +36,29 @@ const OrderCard = ({ order }: {order: Order}) => {
                 </Badge>
             </CardHeader>
             <CardContent>
-                <div className="space-y-2 text-sm">
-                    {order.items.map(item => (
-                        <div key={item.id} className="flex justify-between">
-                            <span>{item.name} x {item.quantity}</span>
-                            <span>₹{(item.price * item.quantity).toFixed(2)}</span>
+                <div className="space-y-4 text-sm">
+                    {order.pendingItems.length > 0 && (
+                        <div>
+                            <h3 className="font-semibold flex items-center gap-2 mb-2"><Bell className="text-destructive h-4 w-4" /> New Items</h3>
+                            <div className="space-y-1">
+                                {order.pendingItems.map(item => <OrderItemRow key={item.id} item={item} />)}
+                            </div>
                         </div>
-                    ))}
+                    )}
+                     {order.pendingItems.length > 0 && order.confirmedItems.length > 0 && <Separator />}
+
+                    {order.confirmedItems.length > 0 && (
+                        <div>
+                            <h3 className="font-semibold flex items-center gap-2 mb-2"><ChefHat className="h-4 w-4" /> In the Kitchen</h3>
+                             <div className="space-y-1">
+                                {order.confirmedItems.map(item => <OrderItemRow key={item.id} item={item} />)}
+                            </div>
+                        </div>
+                    )}
+                    
                     <Separator />
                     <div className="flex justify-between font-bold">
-                        <span>Total ({totalItems} items)</span>
+                        <span>Total ({totalNewItems + totalConfirmedItems} items)</span>
                         <span>₹{totalPrice.toFixed(2)}</span>
                     </div>
                 </div>
@@ -77,7 +101,7 @@ export default function CaptainPage() {
     }
     
     const pendingOrders = orders.filter(o => o.status === 'pending');
-    const confirmedOrders = orders.filter(o => o.status === 'confirmed');
+    const confirmedOrders = orders.filter(o => o.status === 'confirmed' && o.pendingItems.length === 0);
 
     return (
         <div className="bg-background min-h-screen">

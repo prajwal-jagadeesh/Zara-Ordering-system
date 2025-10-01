@@ -12,13 +12,13 @@ import { Button } from '@/components/ui/button';
 import { useCart } from './cart-context';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Minus, Plus, Loader2, ChefHat } from 'lucide-react';
+import { Minus, Plus, Loader2, ChefHat, Bell } from 'lucide-react';
 import React from 'react';
 import Image from 'next/image';
 import type { CartItem } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
-const CartItemRow = ({ item, isOrdered }: { item: CartItem, isOrdered: boolean }) => {
+const CartItemRow = ({ item, isOrdered, isConfirmed }: { item: CartItem, isOrdered: boolean, isConfirmed: boolean }) => {
     const { updateQuantity, removeFromCart, tableNumber, orders } = useCart();
     
     return (
@@ -72,18 +72,19 @@ export function CartSheet() {
       setIsCartOpen(false);
       toast({
         title: "Order Updated",
-        description: "Your new items have been sent to the kitchen.",
+        description: "Your new items have been sent to the kitchen for confirmation.",
       })
     }, 1000);
   }
 
   const currentOrder = orders.find(o => o.tableId === tableNumber);
-  const orderedItems = currentOrder?.items || [];
-  const isConfirmed = currentOrder?.status === 'confirmed';
+  const pendingItems = currentOrder?.pendingItems || [];
+  const confirmedItems = currentOrder?.confirmedItems || [];
 
   const totalCartPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const totalOrderPrice = orderedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const combinedPrice = totalOrderPrice + totalCartPrice;
+  const totalPendingPrice = pendingItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalConfirmedPrice = confirmedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const combinedPrice = totalCartPrice + totalPendingPrice + totalConfirmedPrice;
 
 
   return (
@@ -94,7 +95,7 @@ export function CartSheet() {
           <Button variant="link" onClick={clearCart} className="text-destructive">Clear New Items</Button>
         </SheetHeader>
         <Separator />
-        {(orderedItems.length > 0 || cartItems.length > 0) ? (
+        {(cartItems.length > 0 || pendingItems.length > 0 || confirmedItems.length > 0) ? (
           <>
             <ScrollArea className="flex-1 px-6">
               <div className="flex flex-col gap-6 py-6">
@@ -102,19 +103,31 @@ export function CartSheet() {
                 {cartItems.length > 0 && (
                     <>
                         <h3 className="text-base font-semibold">New Items</h3>
-                        {cartItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={false} />)}
+                        {cartItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={false} isConfirmed={false} />)}
                     </>
                 )}
                 
-                {orderedItems.length > 0 && cartItems.length > 0 && <Separator className="my-2" />}
+                {(cartItems.length > 0 && (pendingItems.length > 0 || confirmedItems.length > 0)) && <Separator className="my-2" />}
 
-                {orderedItems.length > 0 && (
+                {pendingItems.length > 0 && (
+                  <>
+                    <h3 className="text-base font-semibold flex items-center gap-2">
+                        <Bell size={20} />
+                        Waiting for confirmation
+                    </h3>
+                    {pendingItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={true} isConfirmed={false} />)}
+                  </>
+                )}
+
+                {(pendingItems.length > 0 && confirmedItems.length > 0) && <Separator className="my-2" />}
+
+                {confirmedItems.length > 0 && (
                   <>
                     <h3 className="text-base font-semibold flex items-center gap-2">
                         <ChefHat size={20} />
-                        {currentOrder?.status === 'confirmed' ? "Order is Confirmed" : (currentOrder?.status === 'pending' ? "Waiting for confirmation" : "Order Placed")}
+                        In the Kitchen
                     </h3>
-                    {orderedItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={true} />)}
+                    {confirmedItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={true} isConfirmed={true} />)}
                   </>
                 )}
               </div>

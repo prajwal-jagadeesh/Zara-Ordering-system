@@ -11,20 +11,25 @@ interface MenuItemCardProps {
 }
 
 export function MenuItemCard({ item }: MenuItemCardProps) {
-  const { cartItems, addToCart, updateQuantity, getItemQuantity, orders, tableNumber } = useCart();
+  const { cartItems, addToCart, updateQuantity, orders, tableNumber } = useCart();
   
   const currentOrder = orders.find(o => o.tableId === tableNumber);
-  const orderedItem = currentOrder?.items.find(i => i.id === item.id);
   const cartItem = cartItems.find(i => i.id === item.id);
+  const pendingItem = currentOrder?.pendingItems.find(i => i.id === item.id);
+  const confirmedItem = currentOrder?.confirmedItems.find(i => i.id === item.id);
   
   const quantityInCart = cartItem?.quantity || 0;
-  const quantityOrdered = orderedItem?.quantity || 0;
-  const totalQuantity = quantityInCart + quantityOrdered;
+  const quantityPending = pendingItem?.quantity || 0;
+  const quantityConfirmed = confirmedItem?.quantity || 0;
+
+  const totalQuantity = quantityInCart + quantityPending + quantityConfirmed;
 
   const handleUpdateQuantity = (newQuantity: number) => {
-    const quantityInCart = cartItems.find(i => i.id === item.id)?.quantity || 0;
-    const change = newQuantity - totalQuantity;
-    updateQuantity(item.id, quantityInCart + change);
+    // Only allow changing items that are in the cart (not yet ordered)
+    if (newQuantity >= (quantityPending + quantityConfirmed)) {
+        const cartQuantity = newQuantity - (quantityPending + quantityConfirmed);
+        updateQuantity(item.id, cartQuantity);
+    }
   };
   
   const handleAddToCart = () => {
@@ -56,7 +61,7 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
               size="icon"
               className="h-8 w-8 rounded-full bg-card"
               onClick={() => handleUpdateQuantity(totalQuantity - 1)}
-              disabled={quantityInCart <= 0 && quantityOrdered > 0}
+              disabled={quantityInCart === 0}
             >
               <Minus className="h-4 w-4" />
             </Button>

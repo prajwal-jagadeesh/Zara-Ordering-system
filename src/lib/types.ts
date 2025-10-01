@@ -17,7 +17,8 @@ export interface CartItem extends MenuItem {
 
 export interface Order {
   tableId: string;
-  items: CartItem[];
+  pendingItems: CartItem[];
+  confirmedItems: CartItem[];
   status: 'pending' | 'confirmed';
   orderTime: Date; 
 }

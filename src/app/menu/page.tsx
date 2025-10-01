@@ -46,13 +46,16 @@ export default function MenuPage() {
   }, []);
   
   const currentOrder = orders.find(o => o.tableId === tableNumber);
+  
   const totalItemsInCart = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-  const totalItemsInOrder = currentOrder?.items.reduce((acc, item) => acc + item.quantity, 0) || 0;
-  const combinedTotalItems = totalItemsInCart;
-
+  const totalPendingInOrder = currentOrder?.pendingItems.reduce((acc, item) => acc + item.quantity, 0) || 0;
+  const totalConfirmedInOrder = currentOrder?.confirmedItems.reduce((acc, item) => acc + item.quantity, 0) || 0;
+  const combinedTotalItems = totalItemsInCart + totalPendingInOrder + totalConfirmedInOrder;
+  
   const totalCartPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const totalOrderPrice = currentOrder?.items.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0;
-  const combinedPrice = totalCartPrice + totalOrderPrice;
+  const totalPendingOrderPrice = currentOrder?.pendingItems.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0;
+  const totalConfirmedOrderPrice = currentOrder?.confirmedItems.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0;
+  const combinedPrice = totalCartPrice + totalPendingOrderPrice + totalConfirmedOrderPrice;
 
 
   return (
@@ -62,11 +65,11 @@ export default function MenuPage() {
         <MenuDisplay menuItems={menuItems} />
       </div>
       
-      {(totalItemsInCart > 0 || totalItemsInOrder > 0) && (
+      {combinedTotalItems > 0 && (
         <div className="sticky bottom-0 left-0 right-0 bg-background border-t p-3 shadow-[0_-2px_10px_rgba(0,0,0,0.1)]">
             <div className="container mx-auto flex justify-between items-center">
                 <div>
-                    <p className="font-bold">{totalItemsInCart + totalItemsInOrder} Item/s in Cart</p>
+                    <p className="font-bold">{combinedTotalItems} Item/s in Cart</p>
                     <p className="text-sm">₹{combinedPrice.toFixed(2)}</p>
                 </div>
                 <Button onClick={() => setIsCartOpen(true)} className="bg-black text-white rounded-md">

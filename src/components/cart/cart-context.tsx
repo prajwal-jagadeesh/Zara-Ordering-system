@@ -116,24 +116,24 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
             const updatedOrders = [...prevOrders];
             const existingOrder = updatedOrders[existingOrderIndex];
             
-            const updatedItems = [...existingOrder.items];
+            const newPendingItems = [...existingOrder.pendingItems];
 
             cartItems.forEach(cartItem => {
-                const existingItemIndex = updatedItems.findIndex(item => item.id === cartItem.id);
+                const existingItemIndex = newPendingItems.findIndex(item => item.id === cartItem.id);
                 if (existingItemIndex > -1) {
-                    updatedItems[existingItemIndex] = {
-                        ...updatedItems[existingItemIndex],
-                        quantity: updatedItems[existingItemIndex].quantity + cartItem.quantity
+                    newPendingItems[existingItemIndex] = {
+                        ...newPendingItems[existingItemIndex],
+                        quantity: newPendingItems[existingItemIndex].quantity + cartItem.quantity
                     };
                 } else {
-                    updatedItems.push(cartItem);
+                    newPendingItems.push(cartItem);
                 }
             });
             
             updatedOrders[existingOrderIndex] = {
                 ...existingOrder,
-                items: updatedItems,
-                status: 'pending' // Reset to pending when new items are added
+                pendingItems: newPendingItems,
+                status: 'pending' // Always set to pending when new items are added
             };
 
             return updatedOrders;
@@ -141,7 +141,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
              const newOrder: Order = {
                 tableId: tableNumber,
-                items: cartItems,
+                pendingItems: cartItems,
+                confirmedItems: [],
                 status: 'pending',
                 orderTime: new Date(),
             };
@@ -160,32 +161,46 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     if(!tableNumber) return 0;
     
     const order = orders.find(o => o.tableId === tableNumber);
+    
+    const pendingItem = order?.pendingItems.find(i => i.id === itemId);
+    const confirmedItem = order?.confirmedItems.find(i => i.id === itemId);
     const cartItem = cartItems.find(i => i.id === itemId);
 
-    let orderedQuantity = 0;
-    if (order) {
-        const orderItem = order.items.find(i => i.id === itemId);
-        orderedQuantity = orderItem?.quantity || 0;
-    }
-    
-    const cartQuantity = cartItems.find(i => i.id === itemId)?.quantity || 0;
-    return cartQuantity;
+    return (pendingItem?.quantity || 0) + (confirmedItem?.quantity || 0) + (cartItem?.quantity || 0);
   };
 
-  const currentOrder = useMemo(() => orders.find(o => o.tableId === tableNumber), [orders, tableNumber]);
 
   const totalItems = useMemo(() => {
-    const cartTotal = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-    return cartTotal;
+    return cartItems.reduce((sum, item) => sum + item.quantity, 0);
   }, [cartItems]);
 
   const totalPrice = useMemo(() => {
-    const cartTotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    return cartTotal;
+    return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   }, [cartItems]);
 
   const confirmOrder = (tableId: string) => {
-    setOrders(prev => prev.map(o => o.tableId === tableId ? { ...o, status: 'confirmed' } : o));
+    setOrders(prev => prev.map(o => {
+        if (o.tableId === tableId) {
+            const newConfirmedItems = [...o.confirmedItems];
+            
+            o.pendingItems.forEach(pendingItem => {
+                const existingIndex = newConfirmedItems.findIndex(ci => ci.id === pendingItem.id);
+                if (existingIndex > -1) {
+                    newConfirmedItems[existingIndex].quantity += pendingItem.quantity;
+                } else {
+                    newConfirmedItems.push(pendingItem);
+                }
+            });
+
+            return { 
+                ...o, 
+                status: 'confirmed',
+                pendingItems: [],
+                confirmedItems: newConfirmedItems
+            };
+        }
+        return o;
+    }));
   };
   
   const rejectOrder = (tableId: string) => {
