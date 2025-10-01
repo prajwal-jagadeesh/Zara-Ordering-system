@@ -21,6 +21,8 @@ const BillPage = () => {
   useEffect(() => {
     if (isClient) {
       const tableId = searchParams.get('tableId');
+      // The orders are loaded from localStorage by the CartProvider.
+      // We need to wait until the orders array is populated.
       if (tableId && orders.length > 0) {
         const foundOrder = orders.find(o => o.tableId === tableId);
         setOrder(foundOrder || null);
@@ -30,9 +32,18 @@ const BillPage = () => {
             setTimeout(() => window.print(), 500); // Small delay to ensure rendering
         }
       } else if (!tableId) {
+        // If there's no tableId in the URL, we can stop loading.
         setIsLoading(false);
       } else if (orders.length === 0) {
-        setIsLoading(true);
+        // If there is a tableId but orders haven't loaded yet, we keep loading.
+        // If orders have loaded and it's still 0, the next block will handle it.
+        // We add a timeout to prevent getting stuck if local storage is empty.
+        const timer = setTimeout(() => {
+            if (orders.length === 0) {
+                setIsLoading(false);
+            }
+        }, 2000); // Wait 2 seconds for orders to load.
+        return () => clearTimeout(timer);
       }
     }
   }, [searchParams, orders, isClient]);
