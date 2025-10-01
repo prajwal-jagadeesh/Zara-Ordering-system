@@ -146,8 +146,10 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
             updatedOrders[existingOrderIndex] = {
                 ...existingOrder,
                 pendingItems: newPendingItems,
-                status: 'pending', // Always set to pending when new items are added
-                orderTime: new Date(), // Update order time
+                // Only set status to pending if it's not already confirmed.
+                // This keeps confirmed orders on the KDS screen.
+                status: existingOrder.status === 'confirmed' ? 'confirmed' : 'pending',
+                orderTime: new Date(), // Update order time to show it's recent
             };
 
             return updatedOrders;
