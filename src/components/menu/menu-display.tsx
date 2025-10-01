@@ -56,7 +56,7 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
             const category = entry.target.id.replace(/-/g, ' ') as MenuCategory;
             // Check if the element is in the top part of the viewport
             const rect = entry.boundingClientRect;
-            if (rect.top >= 0 && rect.top <= 150) { // 150px is a buffer for the sticky header
+            if (rect.top >= 0 && rect.top <= 250) { // Increased buffer
               setActiveCategory(category);
               break; // Stop after finding the first matching category from the top
             }
@@ -65,7 +65,7 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
       },
       { 
         rootMargin: '0px 0px -80% 0px',
-        threshold: 0,
+        threshold: 0.1,
       } 
     );
 
@@ -93,7 +93,16 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
                     <Link
                       key={category}
                       href={`#${categoryId}`}
-                      onClick={() => setActiveCategory(category)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setActiveCategory(category);
+                        const element = document.getElementById(categoryId);
+                        if(element) {
+                            const yOffset = -220; 
+                            const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                            window.scrollTo({top: y, behavior: 'smooth'});
+                        }
+                      }}
                       className={cn(
                           "flex flex-col items-center space-y-2 flex-shrink-0 w-24",
                           activeCategory === category ? "border-b-2 border-primary" : ""
@@ -119,7 +128,7 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
                 key={category} 
                 id={categoryId}
                 ref={el => categoryRefs.current[categoryId] = el}
-                className="scroll-mt-32 pt-2">
+                className="scroll-mt-48 pt-8">
                   <h2 className="font-bold text-2xl my-6">{category}</h2>
                   <div className="flex flex-col gap-4">
                       {itemsByCategory[category].map(item => (
