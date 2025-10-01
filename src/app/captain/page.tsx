@@ -21,10 +21,14 @@ const OrderItemRow = ({ item }: { item: CartItem }) => (
 
 const OrderCard = ({ order }: {order: Order}) => {
     const { confirmOrder, rejectOrder } = useCart();
-    const totalNewItems = order.pendingItems.reduce((acc, item) => acc + item.quantity, 0);
-    const totalConfirmedItems = order.confirmedItems.reduce((acc, item) => acc + item.quantity, 0);
-    const totalNewPrice = order.pendingItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    const totalConfirmedPrice = order.confirmedItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+    const pendingItems = order.pendingItems || [];
+    const confirmedItems = order.confirmedItems || [];
+
+    const totalNewItems = pendingItems.reduce((acc, item) => acc + item.quantity, 0);
+    const totalConfirmedItems = confirmedItems.reduce((acc, item) => acc + item.quantity, 0);
+    const totalNewPrice = pendingItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const totalConfirmedPrice = confirmedItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
     const totalPrice = totalNewPrice + totalConfirmedPrice;
 
     return (
@@ -37,21 +41,21 @@ const OrderCard = ({ order }: {order: Order}) => {
             </CardHeader>
             <CardContent>
                 <div className="space-y-4 text-sm">
-                    {order.pendingItems.length > 0 && (
+                    {pendingItems.length > 0 && (
                         <div>
                             <h3 className="font-semibold flex items-center gap-2 mb-2"><Bell className="text-destructive h-4 w-4" /> New Items</h3>
                             <div className="space-y-1">
-                                {order.pendingItems.map(item => <OrderItemRow key={item.id} item={item} />)}
+                                {pendingItems.map(item => <OrderItemRow key={item.id} item={item} />)}
                             </div>
                         </div>
                     )}
-                     {order.pendingItems.length > 0 && order.confirmedItems.length > 0 && <Separator />}
+                     {pendingItems.length > 0 && confirmedItems.length > 0 && <Separator />}
 
-                    {order.confirmedItems.length > 0 && (
+                    {confirmedItems.length > 0 && (
                         <div>
                             <h3 className="font-semibold flex items-center gap-2 mb-2"><ChefHat className="h-4 w-4" /> In the Kitchen</h3>
                              <div className="space-y-1">
-                                {order.confirmedItems.map(item => <OrderItemRow key={item.id} item={item} />)}
+                                {confirmedItems.map(item => <OrderItemRow key={item.id} item={item} />)}
                             </div>
                         </div>
                     )}
@@ -137,5 +141,3 @@ export default function CaptainPage() {
         </div>
     )
 }
-
-    
