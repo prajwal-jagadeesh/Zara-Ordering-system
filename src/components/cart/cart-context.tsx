@@ -116,7 +116,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
             const updatedOrders = [...prevOrders];
             const existingOrder = updatedOrders[existingOrderIndex];
             
-            const newPendingItems = [...existingOrder.pendingItems];
+            const newPendingItems = [...(existingOrder.pendingItems || [])];
 
             cartItems.forEach(cartItem => {
                 const existingItemIndex = newPendingItems.findIndex(item => item.id === cartItem.id);
@@ -181,9 +181,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const confirmOrder = (tableId: string) => {
     setOrders(prev => prev.map(o => {
         if (o.tableId === tableId) {
-            const newConfirmedItems = [...o.confirmedItems];
+            const newConfirmedItems = [...(o.confirmedItems || [])];
             
-            o.pendingItems.forEach(pendingItem => {
+            (o.pendingItems || []).forEach(pendingItem => {
                 const existingIndex = newConfirmedItems.findIndex(ci => ci.id === pendingItem.id);
                 if (existingIndex > -1) {
                     newConfirmedItems[existingIndex].quantity += pendingItem.quantity;
@@ -207,7 +207,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setOrders(prev => {
         const order = prev.find(o => o.tableId === tableId);
         // If there are no confirmed items, remove the entire order
-        if (order && order.confirmedItems.length === 0) {
+        if (order && (order.confirmedItems || []).length === 0) {
             return prev.filter(o => o.tableId !== tableId);
         }
         // Otherwise, just clear the pending items and set status to confirmed
@@ -249,5 +249,3 @@ export const useCart = () => {
   }
   return context;
 };
-
-    
