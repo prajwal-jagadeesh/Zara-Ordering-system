@@ -51,22 +51,31 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
+        for (const entry of entries) {
           if (entry.isIntersecting) {
             const category = entry.target.id.replace(/-/g, ' ') as MenuCategory;
-            setActiveCategory(category);
+            // Check if the element is in the top part of the viewport
+            const rect = entry.boundingClientRect;
+            if (rect.top >= 0 && rect.top <= 150) { // 150px is a buffer for the sticky header
+              setActiveCategory(category);
+              break; // Stop after finding the first matching category from the top
+            }
           }
-        });
+        }
       },
-      { rootMargin: "-100px 0px -60% 0px" } 
+      { 
+        rootMargin: '0px 0px -80% 0px',
+        threshold: 0,
+      } 
     );
 
-    Object.values(categoryRefs.current).forEach((ref) => {
+    const refs = Object.values(categoryRefs.current);
+    refs.forEach((ref) => {
       if (ref) observer.observe(ref);
     });
 
     return () => {
-      Object.values(categoryRefs.current).forEach((ref) => {
+      refs.forEach((ref) => {
         if (ref) observer.unobserve(ref);
       });
     };
