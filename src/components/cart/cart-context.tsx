@@ -21,6 +21,7 @@ interface CartContextType {
   getItemQuantity: (itemId: number) => number;
   confirmOrder: (tableId: string) => void;
   rejectOrder: (tableId: string) => void;
+  serveItem: (tableId: string, itemId: number) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -143,6 +144,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
                 tableId: tableNumber,
                 pendingItems: cartItems,
                 confirmedItems: [],
+                servedItems: [],
                 status: 'pending',
                 orderTime: new Date(),
             };
@@ -196,7 +198,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
                 ...o, 
                 status: 'confirmed',
                 pendingItems: [],
-                confirmedItems: newConfirmedItems
+                confirmedItems: newConfirmedItems,
+                servedItems: o.servedItems || [],
             };
         }
         return o;
@@ -206,11 +209,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const rejectOrder = (tableId: string) => {
     setOrders(prev => {
         const order = prev.find(o => o.tableId === tableId);
-        // If there are no confirmed items, remove the entire order
-        if (order && (order.confirmedItems || []).length === 0) {
+        if (order && (order.confirmedItems || []).length === 0 && (order.servedItems || []).length === 0) {
             return prev.filter(o => o.tableId !== tableId);
         }
-        // Otherwise, just clear the pending items and set status to confirmed
         return prev.map(o => 
             o.tableId === tableId 
             ? { ...o, status: 'confirmed', pendingItems: [] }
@@ -218,6 +219,40 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         );
     });
   };
+
+  const serveItem = (tableId: string, itemId: number) => {
+    setOrders(prev =>
+      prev.map(o => {
+        if (o.tableId === tableId) {
+          const itemToServe = (o.confirmedItems || []).find(i => i.id === itemId);
+          if (!itemToServe) return o;
+
+          const newConfirmedItems = (o.confirmedItems || []).filter(
+            i => i.id !== itemId
+          );
+          
+          const newServedItems = [...(o.servedItems || [])];
+          const existingServedItemIndex = newServedItems.findIndex(
+            i => i.id === itemId
+          );
+
+          if (existingServedItemIndex > -1) {
+            newServedItems[existingServedItemIndex].quantity += itemToServe.quantity;
+          } else {
+            newServedItems.push(itemToServe);
+          }
+
+          return {
+            ...o,
+            confirmedItems: newConfirmedItems,
+            servedItems: newServedItems,
+          };
+        }
+        return o;
+      })
+    );
+  };
+
 
   const value = {
     cartItems,
@@ -236,7 +271,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setIsCartOpen,
     getItemQuantity,
     confirmOrder,
-    rejectOrder
+    rejectOrder,
+    serveItem,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

@@ -6,21 +6,27 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Bell, Check, X, ChefHat, Loader2, Minus, Plus } from 'lucide-react';
+import { Bell, Check, X, ChefHat, Loader2, Utensils } from 'lucide-react';
 import CaptainHeader from './_components/captain-header';
 import type { Order, CartItem } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
 
-const OrderItemRow = ({ item }: { item: CartItem }) => (
-    <div className="flex justify-between">
-        <span>{item.name} x {item.quantity}</span>
-        <span>₹{(item.price * item.quantity).toFixed(2)}</span>
+const OrderItemRow = ({ item, onServe, showServeButton }: { item: CartItem, onServe?: () => void, showServeButton: boolean }) => (
+    <div className="flex justify-between items-center">
+        <div>
+            <span>{item.name} x {item.quantity}</span>
+        </div>
+        {showServeButton && onServe && (
+            <Button variant="outline" size="sm" onClick={onServe}>
+                <Utensils className="mr-2 h-4 w-4" /> Serve
+            </Button>
+        )}
     </div>
 );
 
 
 const OrderCard = ({ order }: {order: Order}) => {
-    const { confirmOrder, rejectOrder } = useCart();
+    const { confirmOrder, rejectOrder, serveItem } = useCart();
 
     const pendingItems = order.pendingItems || [];
     const confirmedItems = order.confirmedItems || [];
@@ -30,6 +36,10 @@ const OrderCard = ({ order }: {order: Order}) => {
     const totalNewPrice = pendingItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
     const totalConfirmedPrice = confirmedItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
     const totalPrice = totalNewPrice + totalConfirmedPrice;
+    
+    const handleServeItem = (itemId: number) => {
+        serveItem(order.tableId, itemId);
+    }
 
     return (
         <Card className="w-full">
@@ -44,8 +54,8 @@ const OrderCard = ({ order }: {order: Order}) => {
                     {pendingItems.length > 0 && (
                         <div>
                             <h3 className="font-semibold flex items-center gap-2 mb-2"><Bell className="text-destructive h-4 w-4" /> New Items</h3>
-                            <div className="space-y-1">
-                                {pendingItems.map(item => <OrderItemRow key={item.id} item={item} />)}
+                            <div className="space-y-2">
+                                {pendingItems.map(item => <OrderItemRow key={item.id} item={item} showServeButton={false} />)}
                             </div>
                         </div>
                     )}
@@ -54,8 +64,8 @@ const OrderCard = ({ order }: {order: Order}) => {
                     {confirmedItems.length > 0 && (
                         <div>
                             <h3 className="font-semibold flex items-center gap-2 mb-2"><ChefHat className="h-4 w-4" /> In the Kitchen</h3>
-                             <div className="space-y-1">
-                                {confirmedItems.map(item => <OrderItemRow key={item.id} item={item} />)}
+                             <div className="space-y-2">
+                                {confirmedItems.map(item => <OrderItemRow key={item.id} item={item} onServe={() => handleServeItem(item.id)} showServeButton={true} />)}
                             </div>
                         </div>
                     )}
@@ -104,8 +114,14 @@ export default function CaptainPage() {
         );
     }
     
-    const pendingOrders = orders.filter(o => o.status === 'pending');
-    const confirmedOrders = orders.filter(o => o.status === 'confirmed' && (o.pendingItems || []).length === 0);
+    const activeOrders = orders.filter(o => {
+        const hasPending = (o.pendingItems || []).length > 0;
+        const hasConfirmed = (o.confirmedItems || []).length > 0;
+        return hasPending || hasConfirmed;
+    });
+
+    const pendingOrders = activeOrders.filter(o => o.status === 'pending');
+    const confirmedOrders = activeOrders.filter(o => o.status === 'confirmed' && (o.pendingItems || []).length === 0);
 
     return (
         <div className="bg-background min-h-screen">
@@ -130,9 +146,9 @@ export default function CaptainPage() {
                     </div>
                 )}
 
-                {orders.length === 0 && (
+                {activeOrders.length === 0 && (
                     <div className="text-center py-20">
-                        <h2 className="text-2xl font-bold">No orders yet</h2>
+                        <h2 className="text-2xl font-bold">No active orders</h2>
                         <p className="text-muted-foreground">As soon as customers place an order, it will show up here.</p>
                     </div>
                 )}
