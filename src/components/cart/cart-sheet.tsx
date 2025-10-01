@@ -60,10 +60,6 @@ export function CartSheet() {
       placeOrder();
       setIsPlacingOrder(false);
       setIsCartOpen(false);
-      toast({
-        title: "Order Updated",
-        description: "Your new items have been sent to the kitchen for confirmation.",
-      })
     }, 1000);
   }
 
