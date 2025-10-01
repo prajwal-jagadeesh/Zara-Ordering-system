@@ -204,7 +204,19 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   };
   
   const rejectOrder = (tableId: string) => {
-    setOrders(prev => prev.filter(o => o.tableId !== tableId));
+    setOrders(prev => {
+        const order = prev.find(o => o.tableId === tableId);
+        // If there are no confirmed items, remove the entire order
+        if (order && order.confirmedItems.length === 0) {
+            return prev.filter(o => o.tableId !== tableId);
+        }
+        // Otherwise, just clear the pending items and set status to confirmed
+        return prev.map(o => 
+            o.tableId === tableId 
+            ? { ...o, status: 'confirmed', pendingItems: [] }
+            : o
+        );
+    });
   };
 
   const value = {
