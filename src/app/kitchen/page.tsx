@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useCart } from '@/components/cart/cart-context';
 import type { Order, CartItem } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { Loader2, ChefHat, CookingPot } from 'lucide-react';
+import { Loader2, ChefHat, CookingPot, CheckCircle2 } from 'lucide-react';
 import KitchenHeader from './_components/kitchen-header';
 import { Separator } from '@/components/ui/separator';
 
@@ -13,10 +13,16 @@ const KitchenOrderCard = ({ order }: { order: Order }) => {
     const { markItemReady } = useCart();
     const confirmedItems = order.confirmedItems || [];
     const readyItems = order.readyItems || [];
+    const servedItems = order.servedItems || [];
 
     const handleMarkAsReady = (itemId: number) => {
         markItemReady(order.tableId, itemId);
     };
+    
+    const allItems = [...confirmedItems, ...readyItems, ...servedItems];
+    if (allItems.length === 0) {
+      return null;
+    }
 
     return (
         <div className="flex flex-col border rounded-lg bg-white shadow-md">
@@ -46,7 +52,7 @@ const KitchenOrderCard = ({ order }: { order: Order }) => {
                     </div>
                 )}
                 
-                {confirmedItems.length > 0 && readyItems.length > 0 && <Separator />}
+                {(confirmedItems.length > 0 && (readyItems.length > 0 || servedItems.length > 0)) && <Separator />}
 
                 {readyItems.length > 0 && (
                      <div>
@@ -60,6 +66,25 @@ const KitchenOrderCard = ({ order }: { order: Order }) => {
                                     </span>
                                 </div>
                                 <span className='text-sm font-bold'>Waiting</span>
+                            </div>
+                        ))}
+                    </div>
+                )}
+                
+                {((confirmedItems.length > 0 || readyItems.length > 0) && servedItems.length > 0) && <Separator />}
+
+                {servedItems.length > 0 && (
+                     <div>
+                        <h4 className="font-semibold flex items-center gap-2 mb-2"><CheckCircle2 className="h-4 w-4 text-green-600" /> Served</h4>
+                        {servedItems.map((item: CartItem) => (
+                            <div key={item.id} className="flex justify-between items-center text-muted-foreground">
+                                <div>
+                                    <span className="font-semibold line-through">{item.name}</span>
+                                    <span className="ml-2 bg-muted text-muted-foreground text-xs font-bold px-2 py-1 rounded-full">
+                                        x{item.quantity}
+                                    </span>
+                                </div>
+                                <span className='text-sm font-bold text-green-600'>Done</span>
                             </div>
                         ))}
                     </div>
@@ -95,7 +120,12 @@ export default function KitchenPage() {
         );
     }
     
-    const kitchenOrders = orders.filter(o => o.status === 'confirmed');
+    const kitchenOrders = orders.filter(o => {
+        const hasItems = (o.confirmedItems?.length || 0) > 0 || 
+                         (o.readyItems?.length || 0) > 0 || 
+                         (o.servedItems?.length || 0) > 0;
+        return o.status === 'confirmed' && hasItems;
+    });
 
     return (
         <div className="bg-gray-50 min-h-screen">
