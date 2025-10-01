@@ -16,8 +16,8 @@ export default function Header() {
             <ArrowLeft className="h-6 w-6" />
           </Link>
           <div className="text-center">
-            <h1 className="font-bold text-lg">Yugo Sushi</h1>
-            <p className="text-xs text-muted-foreground">Min. Order: AED 100</p>
+            <h1 className="font-bold text-lg">Nikee's Zara</h1>
+            <p className="text-xs text-muted-foreground">TABLE 14</p>
           </div>
           <button className="p-2" onClick={() => setIsCartOpen(true)}>
             <User className="h-6 w-6" />
