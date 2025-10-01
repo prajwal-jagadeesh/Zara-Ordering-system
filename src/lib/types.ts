@@ -14,3 +14,10 @@ export interface MenuItem {
 export interface CartItem extends MenuItem {
   quantity: number;
 }
+
+export interface Order {
+  tableId: string;
+  items: CartItem[];
+  status: 'pending' | 'confirmed';
+  orderTime: Date;
+}

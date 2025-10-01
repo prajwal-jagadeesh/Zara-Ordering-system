@@ -1,11 +1,11 @@
 'use client';
 
-import type { CartItem, MenuItem } from '@/lib/types';
+import type { CartItem, MenuItem, Order } from '@/lib/types';
 import React, { createContext, useContext, useState, useMemo } from 'react';
 
 interface CartContextType {
   cartItems: CartItem[];
-  orderedItems: CartItem[];
+  orders: Order[];
   tableNumber: string | null;
   setTableNumber: (table: string) => void;
   addToCart: (item: MenuItem, quantity?: number) => void;
@@ -19,13 +19,15 @@ interface CartContextType {
   isCartOpen: boolean;
   setIsCartOpen: (isOpen: boolean) => void;
   getItemQuantity: (itemId: number) => number;
+  confirmOrder: (tableId: string) => void;
+  rejectOrder: (tableId: string) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [orderedItems, setOrderedItems] = useState<CartItem[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   const [isCartAnimating, setIsCartAnimating] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [tableNumber, setTableNumber] = useState<string | null>(null);
@@ -60,48 +62,88 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   };
   
   const placeOrder = () => {
-    // Here you would typically send the order to a backend
-    console.log(`Placing order for table ${tableNumber}:`, cartItems);
-    
-    setOrderedItems(prevOrdered => {
-        const newOrdered = [...prevOrdered];
-        cartItems.forEach(cartItem => {
-            const existingItem = newOrdered.find(orderedItem => orderedItem.id === cartItem.id);
-            if (existingItem) {
-                existingItem.quantity += cartItem.quantity;
-            } else {
-                newOrdered.push(cartItem);
-            }
-        });
-        return newOrdered;
+    if (!tableNumber || cartItems.length === 0) return;
+
+    setOrders(prevOrders => {
+        const existingOrderIndex = prevOrders.findIndex(o => o.tableId === tableNumber && o.status === 'pending');
+        if (existingOrderIndex > -1) {
+            const updatedOrders = [...prevOrders];
+            const existingOrder = updatedOrders[existingOrderIndex];
+            
+            const newItems = cartItems.map(cartItem => {
+                const existingItem = existingOrder.items.find(item => item.id === cartItem.id);
+                if (existingItem) {
+                    return { ...existingItem, quantity: existingItem.quantity + cartItem.quantity };
+                }
+                return cartItem;
+            });
+            
+            const itemIdsInCart = cartItems.map(ci => ci.id);
+            const itemsNotInCart = existingOrder.items.filter(item => !itemIdsInCart.includes(item.id));
+            
+            existingOrder.items = [...itemsNotInCart, ...newItems];
+            return updatedOrders;
+
+        } else {
+             const newOrder: Order = {
+                tableId: tableNumber,
+                items: cartItems,
+                status: 'pending',
+                orderTime: new Date(),
+            };
+            return [...prevOrders, newOrder];
+        }
     });
+    
     setCartItems([]);
   };
 
   const clearCart = () => {
+    if(!tableNumber) return;
+    setOrders(prevOrders => prevOrders.filter(o => o.tableId !== tableNumber));
     setCartItems([]);
-    setOrderedItems([]);
   };
   
   const getItemQuantity = (itemId: number) => {
+    if(!tableNumber) return 0;
+    
+    const order = orders.find(o => o.tableId === tableNumber);
     const cartItem = cartItems.find(i => i.id === itemId);
-    const orderedItem = orderedItems.find(i => i.id === itemId);
-    return (cartItem?.quantity || 0) + (orderedItem?.quantity || 0);
+
+    let orderedQuantity = 0;
+    if (order) {
+        const orderItem = order.items.find(i => i.id === itemId);
+        orderedQuantity = orderItem?.quantity || 0;
+    }
+    
+    return (cartItem?.quantity || 0) + orderedQuantity;
   };
 
-  const allItems = useMemo(() => [...cartItems, ...orderedItems], [cartItems, orderedItems]);
+  const currentOrder = useMemo(() => orders.find(o => o.tableId === tableNumber), [orders, tableNumber]);
 
   const totalItems = useMemo(() => {
-    return allItems.reduce((sum, item) => sum + item.quantity, 0);
-  }, [allItems]);
+    const cartTotal = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+    const orderTotal = currentOrder?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
+    return cartTotal + orderTotal;
+  }, [cartItems, currentOrder]);
 
   const totalPrice = useMemo(() => {
-    return allItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  }, [allItems]);
+    const cartTotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const orderTotal = currentOrder?.items.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0;
+    return cartTotal + orderTotal;
+  }, [cartItems, currentOrder]);
+
+  const confirmOrder = (tableId: string) => {
+    setOrders(prev => prev.map(o => o.tableId === tableId ? { ...o, status: 'confirmed' } : o));
+  };
+  
+  const rejectOrder = (tableId: string) => {
+    setOrders(prev => prev.filter(o => o.tableId !== tableId));
+  };
 
   const value = {
     cartItems,
-    orderedItems,
+    orders,
     tableNumber,
     setTableNumber,
     addToCart,
@@ -115,6 +157,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     isCartOpen,
     setIsCartOpen,
     getItemQuantity,
+    confirmOrder,
+    rejectOrder
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
