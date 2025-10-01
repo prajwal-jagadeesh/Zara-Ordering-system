@@ -6,18 +6,28 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Bell, Check, X, ChefHat, Loader2, Utensils, CheckCircle2, CreditCard } from 'lucide-react';
+import { Bell, Check, X, ChefHat, Loader2, Utensils, CheckCircle2, CreditCard, CookingPot } from 'lucide-react';
 import CaptainHeader from './_components/captain-header';
 import type { Order, CartItem } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
 
-const OrderItemRow = ({ item, onServe, showServeButton, isServed }: { item: CartItem, onServe?: () => void, showServeButton: boolean, isServed?: boolean }) => (
+const OrderItemRow = ({ 
+    item, 
+    onServe, 
+    canBeServed, 
+    isServed 
+}: { 
+    item: CartItem; 
+    onServe?: () => void; 
+    canBeServed: boolean; 
+    isServed: boolean; 
+}) => (
     <div className="flex justify-between items-center">
         <div>
             <span>{item.name} x {item.quantity}</span>
         </div>
-        {showServeButton && onServe && !isServed && (
-            <Button variant="outline" size="sm" onClick={onServe}>
+        {onServe && !isServed && (
+            <Button variant="outline" size="sm" onClick={onServe} disabled={!canBeServed}>
                 <Utensils className="mr-2 h-4 w-4" /> Serve
             </Button>
         )}
@@ -36,22 +46,25 @@ const OrderCard = ({ order }: {order: Order}) => {
 
     const pendingItems = order.pendingItems || [];
     const confirmedItems = order.confirmedItems || [];
+    const readyItems = order.readyItems || [];
     const servedItems = order.servedItems || [];
 
     const totalNewItems = pendingItems.reduce((acc, item) => acc + item.quantity, 0);
     const totalConfirmedItems = confirmedItems.reduce((acc, item) => acc + item.quantity, 0);
+    const totalReadyItems = readyItems.reduce((acc, item) => acc + item.quantity, 0);
     const totalServedItems = servedItems.reduce((acc, item) => acc + item.quantity, 0);
     
     const totalNewPrice = pendingItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
     const totalConfirmedPrice = confirmedItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const totalReadyPrice = readyItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
     const totalServedPrice = servedItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    const totalPrice = totalNewPrice + totalConfirmedPrice + totalServedPrice;
+    const totalPrice = totalNewPrice + totalConfirmedPrice + totalReadyPrice + totalServedPrice;
     
     const handleServeItem = (itemId: number) => {
         serveItem(order.tableId, itemId);
     }
     
-    const isFullyServed = pendingItems.length === 0 && confirmedItems.length === 0 && servedItems.length > 0;
+    const isFullyServed = pendingItems.length === 0 && confirmedItems.length === 0 && readyItems.length === 0 && servedItems.length > 0;
     const hasPendingItems = pendingItems.length > 0;
 
     return (
@@ -68,35 +81,46 @@ const OrderCard = ({ order }: {order: Order}) => {
                         <div>
                             <h3 className="font-semibold flex items-center gap-2 mb-2"><Bell className="text-destructive h-4 w-4" /> New Items</h3>
                             <div className="space-y-2">
-                                {pendingItems.map(item => <OrderItemRow key={item.id} item={item} showServeButton={false} isServed={false} />)}
+                                {pendingItems.map(item => <OrderItemRow key={item.id} item={item} canBeServed={false} isServed={false} />)}
                             </div>
                         </div>
                     )}
-                     {(pendingItems.length > 0 && (confirmedItems.length > 0 || servedItems.length > 0)) && <Separator />}
+                     {(pendingItems.length > 0 && (confirmedItems.length > 0 || readyItems.length > 0 || servedItems.length > 0)) && <Separator />}
 
                     {confirmedItems.length > 0 && (
                         <div>
                             <h3 className="font-semibold flex items-center gap-2 mb-2"><ChefHat className="h-4 w-4" /> In the Kitchen</h3>
                              <div className="space-y-2">
-                                {confirmedItems.map(item => <OrderItemRow key={item.id} item={item} onServe={() => handleServeItem(item.id)} showServeButton={true} isServed={false} />)}
+                                {confirmedItems.map(item => <OrderItemRow key={item.id} item={item} onServe={() => handleServeItem(item.id)} canBeServed={false} isServed={false} />)}
                             </div>
                         </div>
                     )}
                     
-                    {(confirmedItems.length > 0 && servedItems.length > 0) && <Separator />}
+                    {((confirmedItems.length > 0) && (readyItems.length > 0 || servedItems.length > 0)) && <Separator />}
+
+                    {readyItems.length > 0 && (
+                        <div>
+                            <h3 className="font-semibold flex items-center gap-2 mb-2"><CookingPot className="h-4 w-4 text-blue-600" /> Ready for Pickup</h3>
+                             <div className="space-y-2">
+                                {readyItems.map(item => <OrderItemRow key={item.id} item={item} onServe={() => handleServeItem(item.id)} canBeServed={true} isServed={false} />)}
+                            </div>
+                        </div>
+                    )}
+
+                    {((readyItems.length > 0) && servedItems.length > 0) && <Separator />}
 
                     {servedItems.length > 0 && (
                         <div>
                             <h3 className="font-semibold flex items-center gap-2 mb-2"><CheckCircle2 className="h-4 w-4 text-green-600" /> Served</h3>
                             <div className="space-y-2">
-                                {servedItems.map(item => <OrderItemRow key={item.id} item={item} showServeButton={false} isServed={true} />)}
+                                {servedItems.map(item => <OrderItemRow key={item.id} item={item} canBeServed={false} isServed={true} />)}
                             </div>
                         </div>
                     )}
                     
                     <Separator />
                     <div className="flex justify-between font-bold">
-                        <span>Total ({totalNewItems + totalConfirmedItems + totalServedItems} items)</span>
+                        <span>Total ({totalNewItems + totalConfirmedItems + totalReadyItems + totalServedItems} items)</span>
                         <span>₹{totalPrice.toFixed(2)}</span>
                     </div>
                 </div>
@@ -146,7 +170,7 @@ export default function CaptainPage() {
     }
     
     const activeOrders = orders.filter(o => {
-        const totalItems = (o.pendingItems || []).length + (o.confirmedItems || []).length + (o.servedItems || []).length;
+        const totalItems = (o.pendingItems || []).length + (o.confirmedItems || []).length + (o.readyItems || []).length + (o.servedItems || []).length;
         return totalItems > 0;
     });
 
@@ -154,13 +178,14 @@ export default function CaptainPage() {
     
     const inProgressOrders = activeOrders.filter(o => 
         o.status === 'confirmed' && 
-        ((o.pendingItems || []).length > 0 || (o.confirmedItems || []).length > 0)
+        ((o.pendingItems || []).length > 0 || (o.confirmedItems || []).length > 0 || (o.readyItems || []).length > 0)
     );
     
     const completedOrders = activeOrders.filter(o => 
         o.status === 'confirmed' && 
         (o.pendingItems || []).length === 0 && 
         (o.confirmedItems || []).length === 0 &&
+        (o.readyItems || []).length === 0 &&
         (o.servedItems || []).length > 0
     );
 

@@ -19,6 +19,7 @@ export interface Order {
   tableId: string;
   pendingItems: CartItem[];
   confirmedItems: CartItem[];
+  readyItems: CartItem[];
   servedItems: CartItem[];
   status: 'pending' | 'confirmed';
   orderTime: Date; 

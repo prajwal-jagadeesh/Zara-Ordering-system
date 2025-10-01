@@ -159,6 +159,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
                 tableId: tableNumber,
                 pendingItems: cartItems,
                 confirmedItems: [],
+                readyItems: [],
                 servedItems: [],
                 status: 'pending',
                 orderTime: new Date(),
@@ -240,14 +241,13 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setOrders(prev =>
       prev.map(o => {
         if (o.tableId === tableId) {
-          const itemToServe = (o.confirmedItems || []).find(i => i.id === itemId);
+          const itemToServe = (o.readyItems || []).find(i => i.id === itemId);
           if (!itemToServe) return o;
 
-          const newConfirmedItems = (o.confirmedItems || []).filter(
+          const newReadyItems = (o.readyItems || []).filter(
             i => i.id !== itemId
           );
           
-          // Deep copy to prevent mutation issues
           const newServedItems = JSON.parse(JSON.stringify(o.servedItems || []));
           const existingServedItemIndex = newServedItems.findIndex(
             (i: CartItem) => i.id === itemId
@@ -261,7 +261,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
           return {
             ...o,
-            confirmedItems: newConfirmedItems,
+            readyItems: newReadyItems,
             servedItems: newServedItems,
           };
         }
@@ -281,19 +281,19 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         if (!itemToMark) return o;
 
         const newConfirmedItems = (o.confirmedItems || []).filter(item => item.id !== itemId);
-        const newServedItems = JSON.parse(JSON.stringify(o.servedItems || []));
+        const newReadyItems = JSON.parse(JSON.stringify(o.readyItems || []));
 
-        const existingServedIndex = newServedItems.findIndex((si: CartItem) => si.id === itemToMark.id);
-        if (existingServedIndex > -1) {
-            newServedItems[existingServedIndex].quantity += itemToMark.quantity;
+        const existingReadyIndex = newReadyItems.findIndex((si: CartItem) => si.id === itemToMark.id);
+        if (existingReadyIndex > -1) {
+            newReadyItems[existingReadyIndex].quantity += itemToMark.quantity;
         } else {
-            newServedItems.push(itemToMark);
+            newReadyItems.push(itemToMark);
         }
 
         return {
           ...o,
           confirmedItems: newConfirmedItems,
-          servedItems: newServedItems,
+          readyItems: newReadyItems,
         };
       }
       return o;
