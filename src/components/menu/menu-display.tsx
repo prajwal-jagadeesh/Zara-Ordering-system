@@ -4,8 +4,9 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import type { MenuItem, MenuCategory } from '@/lib/types';
 import { MenuItemCard } from './menu-item-card';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 
 interface MenuDisplayProps {
@@ -45,58 +46,80 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
   
   const availableCategories = allCategories.filter(category => itemsByCategory[category]);
   const [activeCategory, setActiveCategory] = useState<MenuCategory>(availableCategories[0] || 'Appetizers');
-  
-  const handleCategoryClick = (category: MenuCategory) => {
-    setActiveCategory(category);
-    const element = document.getElementById(category.replace(/ /g, '-'));
-    if (element) {
-      const headerOffset = 80; // height of sticky header + some padding
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      
-      window.scrollTo({
-         top: offsetPosition,
-         behavior: "smooth"
+  const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const category = entry.target.id.replace(/-/g, ' ') as MenuCategory;
+            setActiveCategory(category);
+          }
+        });
+      },
+      { rootMargin: "-100px 0px -60% 0px" } 
+    );
+
+    Object.values(categoryRefs.current).forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => {
+      Object.values(categoryRefs.current).forEach((ref) => {
+        if (ref) observer.unobserve(ref);
       });
-    }
-  };
+    };
+  }, [categoryRefs, availableCategories]);
+  
 
   return (
     <div className="w-full">
         <div className="sticky top-[65px] bg-background z-10 py-4">
             <ScrollArea className="w-full whitespace-nowrap">
                 <div className="flex space-x-4 pb-2">
-                {availableCategories.map(category => (
-                    <button
-                    key={category}
-                    onClick={() => handleCategoryClick(category)}
-                    className={cn(
-                        "flex flex-col items-center space-y-2 flex-shrink-0 w-24",
-                        activeCategory === category ? "border-b-2 border-primary" : ""
-                    )}
+                {availableCategories.map(category => {
+                  const categoryId = category.replace(/ /g, '-');
+                  return (
+                    <Link
+                      key={category}
+                      href={`#${categoryId}`}
+                      onClick={() => setActiveCategory(category)}
+                      className={cn(
+                          "flex flex-col items-center space-y-2 flex-shrink-0 w-24",
+                          activeCategory === category ? "border-b-2 border-primary" : ""
+                      )}
                     >
-                    <div className="w-20 h-20 rounded-md bg-muted overflow-hidden">
-                       <CategoryImage category={category} imageUrl={categoryImages[category]} />
-                    </div>
-                    <span className="text-xs font-medium whitespace-normal text-center w-full">{category}</span>
-                    </button>
-                ))}
+                      <div className="w-20 h-20 rounded-md bg-muted overflow-hidden">
+                        <CategoryImage category={category} imageUrl={categoryImages[category]} />
+                      </div>
+                      <span className="text-xs font-medium whitespace-normal text-center w-full">{category}</span>
+                    </Link>
+                  )
+                })}
                 </div>
                 <ScrollBar orientation="horizontal" />
             </ScrollArea>
         </div>
 
       <div className="mt-4">
-        {availableCategories.map(category => (
-            <div key={category} id={category.replace(/ /g, '-')} className="scroll-mt-24">
-                <h2 className="font-bold text-2xl my-6">{category}</h2>
-                <div className="flex flex-col gap-4">
-                    {itemsByCategory[category].map(item => (
-                        <MenuItemCard key={item.id} item={item} />
-                    ))}
-                </div>
-            </div>
-        ))}
+        {availableCategories.map(category => {
+            const categoryId = category.replace(/ /g, '-');
+            return (
+              <div 
+                key={category} 
+                id={categoryId}
+                ref={el => categoryRefs.current[categoryId] = el}
+                className="scroll-mt-32 pt-2">
+                  <h2 className="font-bold text-2xl my-6">{category}</h2>
+                  <div className="flex flex-col gap-4">
+                      {itemsByCategory[category].map(item => (
+                          <MenuItemCard key={item.id} item={item} />
+                      ))}
+                  </div>
+              </div>
+            )
+        })}
       </div>
     </div>
   );
