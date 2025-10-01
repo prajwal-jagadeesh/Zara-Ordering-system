@@ -4,10 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useCart } from '@/components/cart/cart-context';
 import type { Order, CartItem } from '@/lib/types';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import { Printer } from 'lucide-react';
 import { format } from 'date-fns';
+import { Loader2 } from 'lucide-react';
 
 const BillPage = () => {
   const searchParams = useSearchParams();
@@ -23,31 +21,38 @@ const BillPage = () => {
   useEffect(() => {
     if (isClient) {
       const tableId = searchParams.get('tableId');
-      // Only proceed if we have a tableId and orders have been loaded from storage.
       if (tableId && orders.length > 0) {
         const foundOrder = orders.find(o => o.tableId === tableId);
         setOrder(foundOrder || null);
         setIsLoading(false);
+        // Automatically trigger print dialog once order is loaded
+        if (foundOrder) {
+            setTimeout(() => window.print(), 500); // Small delay to ensure rendering
+        }
       } else if (!tableId) {
-        // If there's no tableId, we can stop loading.
         setIsLoading(false);
       } else if (orders.length === 0) {
-        // Still waiting for orders to load from context
         setIsLoading(true);
       }
     }
   }, [searchParams, orders, isClient]);
 
-  const handlePrint = () => {
-    window.print();
-  };
-  
   if (!isClient || isLoading) {
-     return <div className="p-10 text-center">Loading Bill...</div>;
+     return (
+        <div className="flex flex-col items-center justify-center min-h-screen text-center font-mono">
+            <Loader2 className="h-8 w-8 animate-spin mb-4" />
+            <p>Loading Bill...</p>
+            <p className="text-xs text-muted-foreground mt-2">Please wait, preparing your receipt.</p>
+        </div>
+     );
   }
   
   if (!order) {
-     return <div className="p-10 text-center font-bold text-red-500">Order not found for this table.</div>;
+     return (
+        <div className="p-10 text-center font-mono font-bold text-destructive">
+            Order not found for this table.
+        </div>
+     );
   }
 
   const allItems = [
@@ -60,7 +65,6 @@ const BillPage = () => {
   const subtotal = allItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const vat = subtotal * 0.05;
   const grandTotal = subtotal + vat;
-
 
   return (
     <>
@@ -86,7 +90,7 @@ const BillPage = () => {
             }
         `}</style>
         <div className="bg-white text-black min-h-screen font-mono">
-            <div className="receipt-container p-2 mx-auto sm:w-[300px]">
+            <div className="receipt-container p-2 mx-auto w-[280px] sm:w-[300px]">
                 <header className="text-center mb-2">
                     <h1 className="text-lg font-bold">Nikee's Zara</h1>
                     <p className="text-xs">Customer Receipt</p>
@@ -144,12 +148,10 @@ const BillPage = () => {
                 <p className="text-center text-[10px] mt-4">
                 Thank you for dining with us!
                 </p>
-            </div>
-
-            <div className="max-w-md mx-auto text-center my-4 no-print">
-                <Button onClick={handlePrint}>
-                    <Printer className="mr-2 h-4 w-4" /> Print Bill
-                </Button>
+                
+                <p className="text-center text-[9px] mt-4 no-print">
+                The print dialog should open automatically. If it does not, please refresh the page.
+                </p>
             </div>
         </div>
     </>
