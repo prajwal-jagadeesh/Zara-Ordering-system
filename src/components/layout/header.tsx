@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, User } from 'lucide-react';
+import { ArrowLeft, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/components/cart/cart-context';
 import { CartSheet } from '@/components/cart/cart-sheet';
 
@@ -20,7 +20,7 @@ export default function Header() {
             {tableNumber && <p className="text-xs text-muted-foreground">TABLE {tableNumber}</p>}
           </div>
           <button className="p-2" onClick={() => setIsCartOpen(true)}>
-            <User className="h-6 w-6" />
+            <ShoppingBag className="h-6 w-6" />
           </button>
         </div>
       </header>
