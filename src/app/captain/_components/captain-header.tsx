@@ -1,11 +1,18 @@
 'use client';
 
-import Link from 'next/link';
+import React from 'next/link';
 import { ChefHat } from 'lucide-react';
 import { useCart } from '@/components/cart/cart-context';
+import Link from 'next/link';
 
 export default function CaptainHeader() {
   const { orders } = useCart();
+  const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const pendingCount = orders.filter(o => o.status === 'pending').length;
 
   return (
@@ -20,8 +27,12 @@ export default function CaptainHeader() {
             <h1 className="font-bold text-lg">Nikee's Zara</h1>
           </div>
           
-          <div className="p-2 text-right">
+          <div className="p-2 text-right min-w-[120px]">
+            {isClient ? (
               <p className="text-sm font-bold">{pendingCount} New Order{pendingCount !== 1 && 's'}</p>
+            ) : (
+                <p className="text-sm font-bold animate-pulse">Loading...</p>
+            )}
           </div>
         </div>
       </header>
