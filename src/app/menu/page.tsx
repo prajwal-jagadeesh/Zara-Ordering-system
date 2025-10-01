@@ -53,8 +53,8 @@ export default function MenuPage() {
   const combinedTotalItems = totalItemsInCart + totalPendingInOrder + totalConfirmedInOrder;
   
   const totalCartPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const totalPendingOrderPrice = currentOrder?.pendingItems.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0;
-  const totalConfirmedOrderPrice = currentOrder?.confirmedItems.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0;
+  const totalPendingOrderPrice = (currentOrder?.pendingItems || []).reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const totalConfirmedOrderPrice = (currentOrder?.confirmedItems || []).reduce((acc, item) => acc + item.price * item.quantity, 0);
   const combinedPrice = totalCartPrice + totalPendingOrderPrice + totalConfirmedOrderPrice;
 
 
