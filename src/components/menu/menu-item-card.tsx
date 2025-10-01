@@ -43,7 +43,7 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
         <p className="text-md font-medium mt-1">₹{item.price.toFixed(2)}</p>
       </div>
       <div className="flex-shrink-0">
-        {totalQuantity > 0 ? (
+        {quantityInCart > 0 ? (
           <div className="flex items-center gap-1">
             <Button
               variant="outline"
@@ -69,7 +69,8 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
             className="rounded-md px-6"
             onClick={handleAddToCart}
           >
-            ADD
+            {totalQuantity > 0 ? `ADD MORE` : 'ADD'}
+            {totalQuantity > 0 && <span className="ml-2 bg-primary text-primary-foreground rounded-full h-5 w-5 text-xs flex items-center justify-center">{totalQuantity}</span>}
           </Button>
         )}
       </div>
