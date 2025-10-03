@@ -7,7 +7,7 @@ import { Card, CardTitle, CardHeader, CardContent, CardFooter } from '@/componen
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from '@/components/ui/switch';
-import { PlusCircle, Trash2, Edit, MoreVertical, Users, CreditCard, UtensilsCrossed, Table as TableIcon, Loader2 } from 'lucide-react';
+import { PlusCircle, Trash2, Edit, MoreVertical, Users, CreditCard, Utensils, Table as TableIcon, Loader2 } from 'lucide-react';
 import PosHeader from './_components/pos-header';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { MenuItem } from '@/lib/types';
@@ -140,7 +140,7 @@ const TableManagementTab = () => {
                 <h2 className="text-2xl font-bold">Tables</h2>
                 <Button onClick={addTable}><PlusCircle className="mr-2 h-4 w-4" /> Add Table</Button>
             </div>
-             <div className="bg-slate-50 p-4 rounded-lg" style={{backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d1d5db' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")`}}>
+             <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg" style={{backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d1d5db' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`}}>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                     {tables.map(table => {
                         const order = orders.find(o => o.tableId === table.id);
@@ -159,12 +159,15 @@ const TableManagementTab = () => {
                         ].reduce((acc, item) => acc + item.price * item.quantity, 0) : 0;
 
                         return (
-                            <Card key={table.id} className={cn("flex flex-col rounded-lg overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105", isOccupied ? "bg-white" : "bg-white/80 backdrop-blur-sm")}>
-                                <CardHeader className={cn("flex flex-row items-center justify-between p-3", isOccupied ? "bg-accent text-accent-foreground" : "bg-slate-200")}>
-                                    <CardTitle className="text-base font-bold">TABLE {table.id}</CardTitle>
+                             <Card key={table.id} className={cn("overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl", isOccupied ? "bg-accent/10 border-accent" : "bg-card")}>
+                                <CardHeader className="flex flex-row items-start justify-between p-4">
+                                    <div className="flex flex-col items-start">
+                                        <p className="text-xs text-muted-foreground">TABLE</p>
+                                        <CardTitle className="text-4xl font-bold">{table.id}</CardTitle>
+                                    </div>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" className="h-6 w-6 p-0 hover:bg-black/10">
+                                            <Button variant="ghost" className="h-8 w-8 p-0">
                                                 <MoreVertical className="h-4 w-4" />
                                             </Button>
                                         </DropdownMenuTrigger>
@@ -176,22 +179,17 @@ const TableManagementTab = () => {
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </CardHeader>
-                                <CardContent className="p-4 flex-grow flex flex-col justify-between items-center text-center">
+                                <CardContent className="p-4 pt-0">
                                     {isOccupied ? (
-                                        <>
-                                            <div>
-                                                <p className="text-xs font-semibold text-accent uppercase">Occupied</p>
-                                                <p className="text-2xl font-bold text-slate-800">₹{totalPrice.toFixed(2)}</p>
-                                            </div>
-                                            <div className="flex items-center gap-2 text-sm text-slate-600 mt-2">
-                                                <Users className="h-4 w-4"/> 
-                                                <span>{totalItems} item{totalItems !== 1 && 's'}</span>
-                                            </div>
-                                        </>
+                                        <div className='text-center'>
+                                            <p className="font-bold text-accent">OCCUPIED</p>
+                                            <p className="text-2xl font-bold">₹{totalPrice.toFixed(2)}</p>
+                                            <p className="text-sm text-muted-foreground">{totalItems} item{totalItems !== 1 && 's'}</p>
+                                        </div>
                                     ) : (
-                                        <div className="flex flex-col items-center gap-2">
-                                            <TableIcon className="h-10 w-10 text-slate-400"/>
-                                            <p className="font-bold text-slate-500">Available</p>
+                                        <div className="text-center">
+                                             <p className="font-bold text-primary">AVAILABLE</p>
+                                             <Utensils className="h-10 w-10 text-muted-foreground mx-auto mt-2" />
                                         </div>
                                     )}
                                 </CardContent>
