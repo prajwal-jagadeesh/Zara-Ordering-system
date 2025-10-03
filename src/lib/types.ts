@@ -25,3 +25,8 @@ export interface Order {
   status: 'pending' | 'confirmed';
   orderTime: Date; 
 }
+
+export interface RestaurantLocation {
+  latitude: number;
+  longitude: number;
+}

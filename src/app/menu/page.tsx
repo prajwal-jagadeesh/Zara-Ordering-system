@@ -26,29 +26,37 @@ const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => 
   return R * c; // in metres
 }
 
-const RESTAURANT_LOCATION = {
-  latitude: 12.9716, // Replace with your restaurant's latitude
-  longitude: 77.5946, // Replace with your restaurant's longitude
-};
 const MAX_DISTANCE_METERS = 100; // Max distance in meters to allow ordering
 
 export default function MenuPage() {
-  const { cartItems, orders, tableNumber, setIsCartOpen, setTableNumber, menuItems } = useCart();
+  const { cartItems, orders, tableNumber, setIsCartOpen, setTableNumber, menuItems, restaurantLocation } = useCart();
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [locationStatus, setLocationStatus] = useState<'checking' | 'allowed' | 'denied' | 'outside'>('checking');
+  const [locationStatus, setLocationStatus] = useState<'checking' | 'allowed' | 'denied' | 'outside' | 'no_settings'>('checking');
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   React.useEffect(() => {
     const table = searchParams.get('table');
     if (table) {
       setTableNumber(table);
-    } else {
+    } else if (isClient) {
       router.push('/');
     }
-  }, [searchParams, setTableNumber, router]);
+  }, [searchParams, setTableNumber, router, isClient]);
 
   useEffect(() => {
+    if (!isClient) return;
+
+    if (!restaurantLocation) {
+        setLocationStatus('no_settings');
+        return;
+    }
+
     if (!navigator.geolocation) {
       setLocationStatus('denied');
       return;
@@ -59,8 +67,8 @@ export default function MenuPage() {
         const distance = getDistance(
           position.coords.latitude,
           position.coords.longitude,
-          RESTAURANT_LOCATION.latitude,
-          RESTAURANT_LOCATION.longitude
+          restaurantLocation.latitude,
+          restaurantLocation.longitude
         );
         
         if (distance <= MAX_DISTANCE_METERS) {
@@ -74,7 +82,7 @@ export default function MenuPage() {
       },
       { enableHighAccuracy: true }
     );
-  }, []);
+  }, [isClient, restaurantLocation]);
   
   const availableMenuItems = menuItems.filter(item => item.isAvailable !== false);
   const currentOrder = orders.find(o => o.tableId === tableNumber);
@@ -101,6 +109,14 @@ export default function MenuPage() {
 
   const isOrderingDisabled = locationStatus !== 'allowed';
 
+  if (!isClient) {
+     return (
+        <div className="flex flex-col items-center justify-center min-h-screen">
+            <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+     )
+  }
+
   return (
     <div className="bg-background min-h-screen">
       <Header />
@@ -121,8 +137,9 @@ export default function MenuPage() {
                 <MapPin className="h-4 w-4" />
                 <AlertTitle>Ordering Disabled</AlertTitle>
                 <AlertDescription>
-                  {locationStatus === 'denied' && "Please enable location services to place an order."}
+                  {locationStatus === 'denied' && "Please enable location services in your browser settings to place an order."}
                   {locationStatus === 'outside' && "You must be at the restaurant to place an order."}
+                  {locationStatus === 'no_settings' && "Ordering is temporarily disabled. Please contact staff."}
                 </AlertDescription>
               </Alert>
             )}

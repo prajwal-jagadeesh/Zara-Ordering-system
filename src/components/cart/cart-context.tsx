@@ -1,8 +1,7 @@
-
 'use client';
 
-import React from 'react';
-import type { CartItem, MenuItem, Order, MenuCategory } from '@/lib/types';
+import React, { useState, useEffect } from 'react';
+import type { CartItem, MenuItem, Order, MenuCategory, RestaurantLocation } from '@/lib/types';
 import { menuData as staticMenuData } from '@/lib/menu-data';
 
 interface CartContextType {
@@ -12,6 +11,7 @@ interface CartContextType {
   tables: {id: string}[];
   categories: MenuCategory[];
   tableNumber: string | null;
+  restaurantLocation: RestaurantLocation | null;
   setTableNumber: (table: string) => void;
   addToCart: (item: MenuItem, quantity?: number) => void;
   updateQuantity: (itemId: number, quantity: number) => void;
@@ -35,6 +35,7 @@ interface CartContextType {
   addMenuItem: (item: Omit<MenuItem, 'id'>) => void;
   updateMenuItem: (item: MenuItem) => void;
   removeMenuItem: (itemId: number) => void;
+  setRestaurantLocation: (location: RestaurantLocation) => void;
 }
 
 const CartContext = React.createContext<CartContextType | undefined>(undefined);
@@ -63,6 +64,7 @@ const setInStorage = (key: string, value: any) => {
 
 const initialMenuItems = staticMenuData.map(item => ({ ...item, isAvailable: true }));
 const defaultTables = Array.from({ length: 15 }, (_, i) => ({ id: (i + 1).toString() }));
+const defaultLocation = { latitude: 12.9716, longitude: 77.5946 };
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cartItems, setCartItems] = React.useState<CartItem[]>([]);
@@ -72,6 +74,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [isCartAnimating, setIsCartAnimating] = React.useState(false);
   const [isCartOpen, setIsCartOpen] = React.useState(false);
   const [tableNumber, setTableNumber] = React.useState<string | null>(null);
+  const [restaurantLocation, setRestaurantLocationState] = React.useState<RestaurantLocation | null>(() => getFromStorage('restaurantLocation', defaultLocation));
+
 
   React.useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
@@ -92,6 +96,11 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
           setTables(JSON.parse(event.newValue));
         } catch (e) { console.error("Error parsing tables from storage", e); }
       }
+      if (event.key === 'restaurantLocation' && event.newValue) {
+        try {
+            setRestaurantLocationState(JSON.parse(event.newValue));
+        } catch(e) { console.error("Error parsing restaurantLocation from storage", e)}
+      }
     };
 
     window.addEventListener('storage', handleStorageChange);
@@ -101,7 +110,11 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   React.useEffect(() => { setInStorage('orders', orders); }, [orders]);
   React.useEffect(() => { setInStorage('menuItems', menuItems); }, [menuItems]);
   React.useEffect(() => { setInStorage('tables', tables); }, [tables]);
+  React.useEffect(() => { setInStorage('restaurantLocation', restaurantLocation); }, [restaurantLocation]);
 
+  const setRestaurantLocation = (location: RestaurantLocation) => {
+      setRestaurantLocationState(location);
+  }
 
   const addToCart = (item: MenuItem, quantity: number = 1) => {
     setCartItems(prevItems => {
@@ -328,6 +341,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     tables,
     categories,
     tableNumber,
+    restaurantLocation,
+    setRestaurantLocation,
     setTableNumber,
     addToCart,
     updateQuantity,
@@ -363,5 +378,3 @@ export const useCart = () => {
   }
   return context;
 };
-
-    

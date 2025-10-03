@@ -4,16 +4,18 @@ import React, { useState, useEffect } from 'react';
 import { useCart } from '@/components/cart/cart-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardTitle, CardHeader, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Switch } from '@/components/ui/switch';
-import { PlusCircle, Trash2, Edit, MoreVertical, Utensils, Loader2, Table as TableIcon, List, LayoutDashboard } from 'lucide-react';
+import { PlusCircle, Trash2, Edit, MoreVertical, Utensils, Loader2, LayoutDashboard, List, Settings, MapPin } from 'lucide-react';
 import PosHeader from './_components/pos-header';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import type { MenuItem } from '@/lib/types';
+import type { MenuItem, RestaurantLocation } from '@/lib/types';
 import { MenuItemForm } from './_components/menu-item-form';
 import { DeleteConfirmationDialog } from './_components/delete-confirmation-dialog';
 import { cn } from '@/lib/utils';
-
+import { useToast } from '@/hooks/use-toast';
 
 const MenuItemRow = ({ item, onEdit, onDelete }: { item: MenuItem, onEdit: () => void, onDelete: () => void }) => {
     const { toggleMenuItemAvailability } = useCart();
@@ -221,10 +223,97 @@ const TableManagementTab = () => {
     );
 };
 
+const SettingsManagementTab = () => {
+    const { restaurantLocation, setRestaurantLocation } = useCart();
+    const { toast } = useToast();
+    const [location, setLocation] = useState<RestaurantLocation>({
+        latitude: restaurantLocation?.latitude || 0,
+        longitude: restaurantLocation?.longitude || 0,
+    });
+    const [isFetching, setIsFetching] = useState(false);
+
+    useEffect(() => {
+        if(restaurantLocation) {
+            setLocation(restaurantLocation);
+        }
+    }, [restaurantLocation]);
+
+    const handleFetchLocation = () => {
+        setIsFetching(true);
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const newLocation = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
+                    };
+                    setLocation(newLocation);
+                    setIsFetching(false);
+                    toast({ title: "Location Fetched!", description: "Current location has been updated." });
+                },
+                (error) => {
+                    setIsFetching(false);
+                    toast({ variant: "destructive", title: "Error", description: `Could not fetch location: ${error.message}` });
+                }
+            );
+        } else {
+            setIsFetching(false);
+            toast({ variant: "destructive", title: "Unsupported", description: "Geolocation is not supported by your browser." });
+        }
+    };
+    
+    const handleSave = () => {
+        setRestaurantLocation(location);
+        toast({ title: "Settings Saved!", description: "Restaurant location has been updated successfully." });
+    }
+
+    return (
+         <div className="space-y-6">
+            <h2 className="text-2xl font-bold">Location Settings</h2>
+            <Card>
+                <CardContent className="p-6 space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                        Set your restaurant's location to verify customers are present before they can place an order.
+                    </p>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="latitude">Latitude</Label>
+                            <Input 
+                                id="latitude" 
+                                type="number" 
+                                value={location.latitude}
+                                onChange={(e) => setLocation(l => ({...l, latitude: parseFloat(e.target.value)}))}
+                                placeholder="e.g., 12.9716"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="longitude">Longitude</Label>
+                            <Input 
+                                id="longitude" 
+                                type="number" 
+                                value={location.longitude}
+                                onChange={(e) => setLocation(l => ({...l, longitude: parseFloat(e.target.value)}))}
+                                placeholder="e.g., 77.5946"
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                        <Button onClick={handleFetchLocation} variant="outline" disabled={isFetching}>
+                            {isFetching ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <MapPin className="mr-2 h-4 w-4" />}
+                            Fetch Current Location
+                        </Button>
+                        <Button onClick={handleSave}>Save Settings</Button>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    )
+}
+
 
 export default function PosPage() {
     const [isClient, setIsClient] = useState(false);
-    const [activeView, setActiveView] = useState<'tables' | 'menu'>('tables');
+    const [activeView, setActiveView] = useState<'tables' | 'menu' | 'settings'>('tables');
 
     useEffect(() => {
         setIsClient(true);
@@ -252,12 +341,21 @@ export default function PosPage() {
                         <List className="mr-2 h-4 w-4" />
                         Menu Management
                     </Button>
+                    <Button 
+                        variant={activeView === 'settings' ? 'secondary' : 'ghost'} 
+                        className="w-full justify-start"
+                        onClick={() => setActiveView('settings')}
+                    >
+                        <Settings className="mr-2 h-4 w-4" />
+                        Settings
+                    </Button>
                 </aside>
                 <main className="flex-1 p-8">
                      {isClient ? (
                         <>
                           {activeView === 'tables' && <TableManagementTab />}
                           {activeView === 'menu' && <MenuManagementTab />}
+                          {activeView === 'settings' && <SettingsManagementTab />}
                         </>
                     ) : (
                         <div className="flex justify-center items-center h-64">
