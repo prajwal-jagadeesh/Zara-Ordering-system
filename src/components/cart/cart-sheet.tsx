@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -59,7 +60,6 @@ export function CartSheet() {
     setTimeout(() => {
       placeOrder();
       setIsPlacingOrder(false);
-      setIsCartOpen(false);
     }, 1000);
   }
 
