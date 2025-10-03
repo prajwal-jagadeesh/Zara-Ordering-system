@@ -1,8 +1,6 @@
-
 'use client';
 
 import React from 'react';
-import { menuData } from '@/lib/menu-data';
 import type { MenuItem } from '@/lib/types';
 import MenuDisplay from '@/components/menu/menu-display';
 import { useCart } from '@/components/cart/cart-context';
@@ -10,19 +8,8 @@ import Header from '@/components/layout/header';
 import { Button } from '@/components/ui/button';
 import { useSearchParams, useRouter } from 'next/navigation';
 
-async function getMenuItems(): Promise<MenuItem[]> {
-    return menuData.map(item => {
-        const imageId = item.name.toLowerCase().replace(/ /g, '-').replace(/&/g, 'and');
-        return {
-            ...item,
-            imageId: imageId,
-        };
-    });
-}
-
 export default function MenuPage() {
-  const [menuItems, setMenuItems] = React.useState<MenuItem[]>([]);
-  const { cartItems, orders, tableNumber, setIsCartOpen, setTableNumber } = useCart();
+  const { cartItems, orders, tableNumber, setIsCartOpen, setTableNumber, menuItems } = useCart();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -31,13 +18,12 @@ export default function MenuPage() {
     if (table) {
       setTableNumber(table);
     } else {
+      // For now, if no table, redirect. In future, maybe prompt for table number.
       router.push('/');
     }
   }, [searchParams, setTableNumber, router]);
   
-  React.useEffect(() => {
-    getMenuItems().then(setMenuItems);
-  }, []);
+  const availableMenuItems = menuItems.filter(item => item.isAvailable !== false);
   
   const currentOrder = orders.find(o => o.tableId === tableNumber);
   
@@ -61,12 +47,11 @@ export default function MenuPage() {
   
   const combinedPrice = totalCartPrice + totalOrderPrice;
 
-
   return (
     <div className="bg-background min-h-screen">
       <Header />
       <div className="container mx-auto py-4 px-2 sm:px-4 lg:px-6 relative">
-        <MenuDisplay menuItems={menuItems} />
+        <MenuDisplay menuItems={availableMenuItems} />
       </div>
       
       {combinedTotalItems > 0 && (

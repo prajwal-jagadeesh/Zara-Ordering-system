@@ -9,6 +9,7 @@ export interface MenuItem {
   imageUrl?: string;
   imageHint?: string;
   imageId?: string;
+  isAvailable?: boolean;
 }
 
 export interface CartItem extends MenuItem {

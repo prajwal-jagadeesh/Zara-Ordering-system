@@ -6,6 +6,7 @@ import { MenuItemCard } from './menu-item-card';
 import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { useCart } from '@/components/cart/cart-context';
 
 
 interface MenuDisplayProps {
@@ -13,12 +14,7 @@ interface MenuDisplayProps {
 }
 
 export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
-  const allCategories: MenuCategory[] = [
-    'Appetizers', 'Soulful Soups', 'Pastas & Spaghetti', 
-    'Artisan Breads', 'Signature Curries', 'Heritage Rice Bowls',
-    'sip sesh', 'Sweets Endings', 'Coffee Clasics', 'Platters',
-    'Yakisoba', 'Yakimeshi'
-  ];
+  const { categories } = useCart();
   
   const itemsByCategory = menuItems.reduce((acc, item) => {
     if (!acc[item.category]) {
@@ -28,7 +24,7 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
     return acc;
   }, {} as Record<MenuCategory, MenuItem[]>);
   
-  const availableCategories = allCategories.filter(category => itemsByCategory[category]);
+  const availableCategories = categories.filter(category => itemsByCategory[category]);
   const [activeCategory, setActiveCategory] = useState<MenuCategory>(availableCategories[0] || 'Appetizers');
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
 

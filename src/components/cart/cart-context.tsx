@@ -1,11 +1,15 @@
 'use client';
 
 import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
-import type { CartItem, MenuItem, Order } from '@/lib/types';
+import type { CartItem, MenuItem, Order, MenuCategory } from '@/lib/types';
+import { menuData as staticMenuData } from '@/lib/menu-data';
 
 interface CartContextType {
   cartItems: CartItem[];
   orders: Order[];
+  menuItems: MenuItem[];
+  tables: {id: string}[];
+  categories: MenuCategory[];
   tableNumber: string | null;
   setTableNumber: (table: string) => void;
   addToCart: (item: MenuItem, quantity?: number) => void;
@@ -24,28 +28,26 @@ interface CartContextType {
   serveItem: (tableId: string, itemId: number) => void;
   closeOrder: (tableId: string) => void;
   markItemReady: (tableId: string, itemId: number) => void;
+  toggleMenuItemAvailability: (itemId: number) => void;
+  addTable: () => void;
+  removeTable: (tableId: string) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 // Helper to get data from localStorage
-const getFromStorage = (key: string) => {
+const getFromStorage = (key: string, defaultValue: any) => {
   if (typeof window !== 'undefined') {
     const item = window.localStorage.getItem(key);
     try {
-      if (!item) return [];
-      const parsed = JSON.parse(item);
-      // Make sure orderTime is a Date object
-      return parsed.map((order: any) => ({
-        ...order,
-        orderTime: new Date(order.orderTime),
-      }))
+      if (!item) return defaultValue;
+      return JSON.parse(item);
     } catch (e) {
-      console.error(e);
-      return [];
+      console.error(`Error parsing ${key} from storage`, e);
+      return defaultValue;
     }
   }
-  return [];
+  return defaultValue;
 };
 
 // Helper to set data in localStorage
@@ -55,10 +57,14 @@ const setInStorage = (key: string, value: any) => {
   }
 };
 
+const initialMenuItems = staticMenuData.map(item => ({ ...item, isAvailable: true }));
+const defaultTables = Array.from({ length: 15 }, (_, i) => ({ id: (i + 1).toString() }));
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [orders, setOrders] = useState<Order[]>(() => getFromStorage('orders'));
+  const [orders, setOrders] = useState<Order[]>(() => getFromStorage('orders', []).map((o:any) => ({...o, orderTime: new Date(o.orderTime)})) );
+  const [menuItems, setMenuItems] = useState<MenuItem[]>(() => getFromStorage('menuItems', initialMenuItems));
+  const [tables, setTables] = useState<{id: string}[]>(() => getFromStorage('tables', defaultTables));
   const [isCartAnimating, setIsCartAnimating] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [tableNumber, setTableNumber] = useState<string | null>(null);
@@ -66,41 +72,41 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === 'orders' && event.newValue) {
-         try {
-            const parsed = JSON.parse(event.newValue);
-            const newOrders = parsed.map((order: any) => ({
-                ...order,
-                orderTime: new Date(order.orderTime),
-            }));
-            setOrders(newOrders);
-        } catch (e) {
-            console.error("Error parsing orders from storage", e);
-        }
+        try {
+          const parsed = JSON.parse(event.newValue);
+          const newOrders = parsed.map((order: any) => ({ ...order, orderTime: new Date(order.orderTime) }));
+          setOrders(newOrders);
+        } catch (e) { console.error("Error parsing orders from storage", e); }
+      }
+      if (event.key === 'menuItems' && event.newValue) {
+        try {
+          setMenuItems(JSON.parse(event.newValue));
+        } catch (e) { console.error("Error parsing menuItems from storage", e); }
+      }
+      if (event.key === 'tables' && event.newValue) {
+        try {
+          setTables(JSON.parse(event.newValue));
+        } catch (e) { console.error("Error parsing tables from storage", e); }
       }
     };
 
     window.addEventListener('storage', handleStorageChange);
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  useEffect(() => {
-    setInStorage('orders', orders);
-  }, [orders]);
+  useEffect(() => { setInStorage('orders', orders); }, [orders]);
+  useEffect(() => { setInStorage('menuItems', menuItems); }, [menuItems]);
+  useEffect(() => { setInStorage('tables', tables); }, [tables]);
 
 
   const addToCart = (item: MenuItem, quantity: number = 1) => {
     setCartItems(prevItems => {
       const existingItem = prevItems.find(i => i.id === item.id);
       if (existingItem) {
-        return prevItems.map(i =>
-          i.id === item.id ? { ...i, quantity: i.quantity + quantity } : i
-        );
+        return prevItems.map(i => i.id === item.id ? { ...i, quantity: i.quantity + quantity } : i);
       }
       return [...prevItems, { ...item, quantity }];
     });
-    
     setIsCartAnimating(true);
     setTimeout(() => setIsCartAnimating(false), 500);
   };
@@ -109,9 +115,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     if (quantity <= 0) {
       removeFromCart(itemId);
     } else {
-      setCartItems(prevItems =>
-        prevItems.map(i => (i.id === itemId ? { ...i, quantity } : i))
-      );
+      setCartItems(prevItems => prevItems.map(i => (i.id === itemId ? { ...i, quantity } : i)));
     }
   };
 
@@ -127,16 +131,12 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         if (existingOrderIndex > -1) {
             const updatedOrders = [...prevOrders];
             const existingOrder = updatedOrders[existingOrderIndex];
-            
             const newPendingItems = [...(existingOrder.pendingItems || [])];
 
             cartItems.forEach(cartItem => {
                 const existingItemIndex = newPendingItems.findIndex(item => item.id === cartItem.id);
                 if (existingItemIndex > -1) {
-                    newPendingItems[existingItemIndex] = {
-                        ...newPendingItems[existingItemIndex],
-                        quantity: newPendingItems[existingItemIndex].quantity + cartItem.quantity
-                    };
+                    newPendingItems[existingItemIndex].quantity += cartItem.quantity;
                 } else {
                     newPendingItems.push(cartItem);
                 }
@@ -148,9 +148,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
                 status: existingOrder.status === 'confirmed' ? 'confirmed' : 'pending',
                 orderTime: new Date(),
             };
-
             return updatedOrders;
-
         } else {
              const newOrder: Order = {
                 tableId: tableNumber,
@@ -164,8 +162,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
             return [...prevOrders, newOrder];
         }
     });
-    
     setCartItems([]);
+    // setIsCartOpen(false); // User requested this to be removed.
   };
 
   const clearCart = () => {
@@ -191,45 +189,12 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
             }
         }
     }
-    
-    // This logic is tricky. If items are in cart and also in order, we need to decide how to show them.
-    // The original logic was to sum them up. Let's trace it.
-    // The cartItem is from the current "adding" session.
-    // The orderedItem is what's already submitted.
-    // The menu item card shows `totalQuantity`. It has `quantityInCart` (from `cartItems`) and adds more.
-    // The issue before was that `placeOrder` cleared cartItems. Now it doesn't.
-    
-    // Let's go back to the original `getItemQuantity` logic, but we must make sure `placeOrder` clears the cart.
-    // The user's request was "when order is placed, cart is getting hidden. No need of that".
-    // That means the sheet shouldn't close. I will put that logic back.
-    // `setCartItems([])` is what the other user wanted to remove.
-    // But that causes double counting.
-
-    const order = orders.find(o => o.tableId === tableNumber);
-    if (!order) return cartItem?.quantity || 0;
-    
-    const allItems = [
-        ...(order.pendingItems || []),
-        ...(order.confirmedItems || []),
-        ...(order.readyItems || []),
-        ...(order.servedItems || [])
-    ];
-
-    const orderedItem = allItems.find(i => i.id === itemId);
-    const orderedQuantity = orderedItem?.quantity || 0;
-    
-    // The quantity displayed on the "ADD" button should be the total across all states for that table
-    return (cartItems.find(i => i.id === itemId)?.quantity || 0) + orderedQuantity;
+    return quantity;
   };
 
 
-  const totalItems = useMemo(() => {
-    return cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  }, [cartItems]);
-
-  const totalPrice = useMemo(() => {
-    return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  }, [cartItems]);
+  const totalItems = useMemo(() => cartItems.reduce((sum, item) => sum + item.quantity, 0), [cartItems]);
+  const totalPrice = useMemo(() => cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0), [cartItems]);
 
   const confirmOrder = (tableId: string) => {
     setOrders(prev => prev.map(o => {
@@ -246,12 +211,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
           }
         });
 
-        return {
-          ...o,
-          status: 'confirmed',
-          pendingItems: [],
-          confirmedItems: newConfirmedItems,
-        };
+        return { ...o, status: 'confirmed', pendingItems: [], confirmedItems: newConfirmedItems };
       }
       return o;
     }));
@@ -263,45 +223,27 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         if (order && (order.confirmedItems || []).length === 0 && (order.servedItems || []).length === 0) {
             return prev.filter(o => o.tableId !== tableId);
         }
-        return prev.map(o => 
-            o.tableId === tableId 
-            ? { ...o, status: 'confirmed', pendingItems: [] }
-            : o
-        );
+        return prev.map(o => o.tableId === tableId ? { ...o, status: 'confirmed', pendingItems: [] } : o );
     });
   };
 
   const serveItem = (tableId: string, itemId: number) => {
-    setOrders(prev =>
-      prev.map(o => {
-        if (o.tableId === tableId) {
-          const itemToServe = (o.readyItems || []).find(i => i.id === itemId);
-          if (!itemToServe) return o;
-
-          const newReadyItems = (o.readyItems || []).filter(
-            i => i.id !== itemId
-          );
-          
-          const newServedItems = JSON.parse(JSON.stringify(o.servedItems || []));
-          const existingServedItemIndex = newServedItems.findIndex(
-            (i: CartItem) => i.id === itemId
-          );
-
-          if (existingServedItemIndex > -1) {
-            newServedItems[existingServedItemIndex].quantity += itemToServe.quantity;
-          } else {
-            newServedItems.push(itemToServe);
-          }
-
-          return {
-            ...o,
-            readyItems: newReadyItems,
-            servedItems: newServedItems,
-          };
+    setOrders(prev => prev.map(o => {
+      if (o.tableId === tableId) {
+        const itemToServe = (o.readyItems || []).find(i => i.id === itemId);
+        if (!itemToServe) return o;
+        const newReadyItems = (o.readyItems || []).filter(i => i.id !== itemId);
+        const newServedItems = JSON.parse(JSON.stringify(o.servedItems || []));
+        const existingServedItemIndex = newServedItems.findIndex((i: CartItem) => i.id === itemId);
+        if (existingServedItemIndex > -1) {
+          newServedItems[existingServedItemIndex].quantity += itemToServe.quantity;
+        } else {
+          newServedItems.push(itemToServe);
         }
-        return o;
-      })
-    );
+        return { ...o, readyItems: newReadyItems, servedItems: newServedItems };
+      }
+      return o;
+    }));
   };
   
   const closeOrder = (tableId: string) => {
@@ -323,21 +265,44 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
             newReadyItems.push(itemToMark);
         }
-
-        return {
-          ...o,
-          confirmedItems: newConfirmedItems,
-          readyItems: newReadyItems,
-        };
+        return { ...o, confirmedItems: newConfirmedItems, readyItems: newReadyItems };
       }
       return o;
-    }))
+    }));
   };
+
+  const toggleMenuItemAvailability = (itemId: number) => {
+    setMenuItems(prev => prev.map(item => item.id === itemId ? { ...item, isAvailable: item.isAvailable === false ? true : false } : item));
+  };
+  
+  const addTable = () => {
+    setTables(prev => {
+        const maxId = prev.reduce((max, table) => Math.max(max, parseInt(table.id)), 0);
+        return [...prev, { id: (maxId + 1).toString() }];
+    });
+  };
+
+  const removeTable = (tableId: string) => {
+    setTables(prev => prev.filter(table => table.id !== tableId));
+  };
+
+  const categories = useMemo(() => {
+    const allCategories: MenuCategory[] = [
+      'Appetizers', 'Soulful Soups', 'Pastas & Spaghetti', 
+      'Artisan Breads', 'Signature Curries', 'Heritage Rice Bowls',
+      'sip sesh', 'Sweets Endings', 'Coffee Clasics', 'Platters',
+      'Yakisoba', 'Yakimeshi'
+    ];
+    return allCategories.filter(category => menuItems.some(item => item.category === category));
+  }, [menuItems]);
 
 
   const value = {
     cartItems,
     orders,
+    menuItems,
+    tables,
+    categories,
     tableNumber,
     setTableNumber,
     addToCart,
@@ -356,6 +321,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     serveItem,
     closeOrder,
     markItemReady,
+    toggleMenuItemAvailability,
+    addTable,
+    removeTable,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
