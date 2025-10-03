@@ -71,7 +71,15 @@ const BillPage = () => {
 
   const subtotal = allItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   const vat = subtotal * 0.05;
-  const grandTotal = subtotal + vat;
+  let totalBeforeDiscount = subtotal + vat;
+  let discountAmount = 0;
+
+  if(order.discountApplied && order.discountPercentage) {
+      discountAmount = totalBeforeDiscount * (order.discountPercentage / 100);
+  }
+
+  const grandTotal = totalBeforeDiscount - discountAmount;
+
 
   return (
     <>
@@ -143,6 +151,12 @@ const BillPage = () => {
                         <span>VAT (5%)</span>
                         <span>₹{vat.toFixed(2)}</span>
                     </div>
+                     {order.discountApplied && (
+                        <div className="flex justify-between text-green-600 font-semibold">
+                            <span>Discount ({order.discountPercentage}%)</span>
+                            <span>-₹{discountAmount.toFixed(2)}</span>
+                        </div>
+                    )}
                     <hr className="border-dashed border-black my-1" />
                     <div className="flex justify-between font-bold text-sm">
                         <span>Grand Total</span>
@@ -166,5 +180,3 @@ const BillPage = () => {
 };
 
 export default BillPage;
-
-    

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Bell, Check, X, ChefHat, Loader2, Utensils, CheckCircle2, CreditCard, CookingPot } from 'lucide-react';
+import { Bell, Check, X, ChefHat, Loader2, Utensils, CheckCircle2, CreditCard, CookingPot, ExternalLink, Percent } from 'lucide-react';
 import CaptainHeader from './_components/captain-header';
 import type { Order, CartItem } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
@@ -43,7 +43,7 @@ const OrderItemRow = ({
 
 
 const OrderCard = ({ order }: {order: Order}) => {
-    const { confirmOrder, rejectOrder, serveItem, closeOrder } = useCart();
+    const { confirmOrder, rejectOrder, serveItem, closeOrder, approveDiscount } = useCart();
 
     const pendingItems = order.pendingItems || [];
     const confirmedItems = order.confirmedItems || [];
@@ -67,6 +67,11 @@ const OrderCard = ({ order }: {order: Order}) => {
     
     const isFullyServed = pendingItems.length === 0 && confirmedItems.length === 0 && readyItems.length === 0 && servedItems.length > 0;
     const hasPendingItems = pendingItems.length > 0;
+    
+    const handleApproveDiscount = () => {
+        // For now, let's approve a fixed 10% discount. This can be made dynamic later.
+        approveDiscount(order.tableId, 10);
+    }
 
     return (
         <Card className="w-full">
@@ -78,6 +83,29 @@ const OrderCard = ({ order }: {order: Order}) => {
             </CardHeader>
             <CardContent>
                 <div className="space-y-4 text-sm">
+                    {order.discountProofUrl && (
+                         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 space-y-2">
+                             <h4 className="font-semibold flex items-center gap-2"><Percent className="h-4 w-4 text-blue-600"/> Discount Claimed</h4>
+                             <div className="flex justify-between items-center">
+                                <a href={order.discountProofUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline truncate text-xs flex-1">
+                                    {order.discountProofUrl}
+                                </a>
+                                <Button size="sm" variant="ghost" className="shrink-0 ml-2" asChild>
+                                    <a href={order.discountProofUrl} target="_blank" rel="noopener noreferrer">
+                                        <ExternalLink className="h-4 w-4" />
+                                    </a>
+                                </Button>
+                             </div>
+                             {order.discountApplied ? (
+                                <p className="text-sm font-semibold text-green-600">Discount of {order.discountPercentage}% Approved!</p>
+                             ) : (
+                                <Button size="sm" className="w-full" onClick={handleApproveDiscount}>
+                                    Approve Discount
+                                </Button>
+                             )}
+                         </div>
+                    )}
+
                     {pendingItems.length > 0 && (
                         <div>
                             <h3 className="font-semibold flex items-center gap-2 mb-2"><Bell className="text-destructive h-4 w-4" /> New Items</h3>
@@ -141,7 +169,7 @@ const OrderCard = ({ order }: {order: Order}) => {
                     </>
                 )}
                 {isFullyServed && !hasPendingItems && (
-                    <Button size="sm" className="w-full" onClick={() => closeOrder(order.tableId)}>
+                     <Button size="sm" className="w-full" onClick={() => closeOrder(order.tableId)}>
                         <CreditCard className="mr-2 h-4 w-4" /> Payment Received
                     </Button>
                 )}
@@ -235,5 +263,3 @@ export default function CaptainPage() {
         </div>
     )
 }
-
-    

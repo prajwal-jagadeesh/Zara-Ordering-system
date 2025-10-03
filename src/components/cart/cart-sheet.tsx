@@ -13,10 +13,11 @@ import { Button } from '@/components/ui/button';
 import { useCart } from './cart-context';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Minus, Plus, Loader2, ChefHat, Bell, CheckCircle2 } from 'lucide-react';
+import { Minus, Plus, Loader2, ChefHat, Bell, CheckCircle2, Percent } from 'lucide-react';
 import React from 'react';
 import type { CartItem } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { DiscountClaimDialog } from '@/app/menu/_components/discount-claim-dialog';
 
 const CartItemRow = ({ item, isOrdered }: { item: CartItem, isOrdered: boolean }) => {
     const { updateQuantity } = useCart();
@@ -52,6 +53,7 @@ const CartItemRow = ({ item, isOrdered }: { item: CartItem, isOrdered: boolean }
 export function CartSheet() {
   const { cartItems, orders, tableNumber, placeOrder, isCartOpen, setIsCartOpen, clearCart } = useCart();
   const [isPlacingOrder, setIsPlacingOrder] = React.useState(false);
+  const [isDiscountDialogOpen, setIsDiscountDialogOpen] = React.useState(false);
   const { toast } = useToast();
 
   const handlePlaceOrder = () => {
@@ -76,12 +78,22 @@ export function CartSheet() {
       ...inKitchenItems,
       ...servedItems,
   ];
+  
+  const canClaimDiscount = allOrderedItems.length > 0 && !currentOrder?.discountProofUrl && !currentOrder?.discountApplied;
 
   const totalCartPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const totalOrderPrice = allOrderedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  let totalOrderPrice = allOrderedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  
+  if (currentOrder?.discountApplied && currentOrder?.discountPercentage) {
+    const discountMultiplier = 1 - (currentOrder.discountPercentage / 100);
+    totalOrderPrice *= discountMultiplier;
+  }
+  
   const combinedPrice = totalCartPrice + totalOrderPrice;
 
+
   return (
+    <>
     <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
       <SheetContent className="flex w-full flex-col p-0 sm:max-w-lg bg-background text-foreground">
         <SheetHeader className="p-6 pb-2 flex-row justify-between items-center">
@@ -138,13 +150,31 @@ export function CartSheet() {
                 )}
               </div>
             </ScrollArea>
-            <SheetFooter className="bg-background mt-auto p-6 border-t">
-              <div className="w-full space-y-4">
+            <SheetFooter className="bg-background mt-auto p-6 border-t space-y-4">
+              
+              {currentOrder?.discountApplied && currentOrder.discountPercentage && (
+                <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-3 rounded-md text-center">
+                    <p className="font-bold">🎉 Discount of {currentOrder.discountPercentage}% Applied! 🎉</p>
+                </div>
+              )}
+
+              {currentOrder?.discountProofUrl && !currentOrder?.discountApplied && (
+                <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-3 rounded-md text-center">
+                    <p className="font-bold">Discount claim pending verification.</p>
+                </div>
+              )}
+
+              <div className="w-full space-y-2">
                  <p className='text-xs text-muted-foreground text-center'>Note: All prices are inclusive of 5% VAT</p>
                 <div className="flex justify-between font-bold text-lg">
                   <span>TOTAL</span>
                   <span>₹{combinedPrice.toFixed(2)}</span>
                 </div>
+                {canClaimDiscount && (
+                    <Button variant="outline" className="w-full" onClick={() => setIsDiscountDialogOpen(true)}>
+                        <Percent className="mr-2 h-4 w-4" /> Claim Social Media Discount
+                    </Button>
+                )}
                 <Button size="lg" className="w-full h-12 text-lg" disabled={isPlacingOrder || cartItems.length === 0} onClick={handlePlaceOrder}>
                   {isPlacingOrder ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : 'Add More to Order'}
                 </Button>
@@ -162,5 +192,7 @@ export function CartSheet() {
         )}
       </SheetContent>
     </Sheet>
+    <DiscountClaimDialog isOpen={isDiscountDialogOpen} setIsOpen={setIsDiscountDialogOpen} />
+    </>
   );
 }
