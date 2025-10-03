@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useCart } from '@/components/cart/cart-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
@@ -10,7 +11,6 @@ import { Bell, Check, X, ChefHat, Loader2, Utensils, CheckCircle2, CreditCard, C
 import CaptainHeader from './_components/captain-header';
 import type { Order, CartItem } from '@/lib/types';
 import { formatDistanceToNow } from 'date-fns';
-import Link from 'next/link';
 
 const OrderItemRow = ({ 
     item, 
@@ -141,9 +141,11 @@ const OrderCard = ({ order }: {order: Order}) => {
                     </>
                 )}
                 {isFullyServed && !hasPendingItems && (
-                    <Button size="sm" className="w-full" onClick={() => closeOrder(order.tableId)}>
-                        <CreditCard className="mr-2 h-4 w-4" /> Payment Received
-                    </Button>
+                    <Link href={`/bill?tableId=${order.tableId}`} target="_blank" className="w-full">
+                        <Button size="sm" className="w-full">
+                            <CreditCard className="mr-2 h-4 w-4" /> Payment Received
+                        </Button>
+                    </Link>
                 )}
             </CardFooter>
         </Card>
@@ -153,9 +155,9 @@ const OrderCard = ({ order }: {order: Order}) => {
 
 export default function CaptainPage() {
     const { orders } = useCart();
-    const [isClient, setIsClient] = React.useState(false);
+    const [isClient, setIsClient] = useState(false);
 
-    React.useEffect(() => {
+    useEffect(() => {
         setIsClient(true);
     }, []);
 

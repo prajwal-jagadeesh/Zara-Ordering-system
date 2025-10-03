@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '@/components/cart/cart-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardTitle, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from '@/components/ui/switch';
-import { PlusCircle, Trash2, Edit, MoreVertical, Users, CreditCard, UtensilsCrossed, Table as TableIcon } from 'lucide-react';
+import { PlusCircle, Trash2, Edit, MoreVertical, Users, CreditCard, UtensilsCrossed, Table as TableIcon, Loader2 } from 'lucide-react';
 import PosHeader from './_components/pos-header';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { MenuItem } from '@/lib/types';
@@ -206,23 +206,34 @@ const TableManagementTab = () => {
 
 
 export default function PosPage() {
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     return (
         <div className="bg-background min-h-screen">
             <PosHeader />
             <div className="container mx-auto py-8">
-                <Tabs defaultValue="tables">
-                    <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="menu">Menu Management</TabsTrigger>
-                        <TabsTrigger value="tables">Table Management</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="menu" className="mt-6">
-                        <MenuManagementTab />
-                    </TabsContent>
-                    <TabsContent value="tables" className="mt-6">
-                        <TableManagementTab />
-                    </TabsContent>
-                </Tabs>
+                {isClient ? (
+                    <Tabs defaultValue="tables">
+                        <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="menu">Menu Management</TabsTrigger>
+                            <TabsTrigger value="tables">Table Management</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="menu" className="mt-6">
+                            <MenuManagementTab />
+                        </TabsContent>
+                        <TabsContent value="tables" className="mt-6">
+                            <TableManagementTab />
+                        </TabsContent>
+                    </Tabs>
+                ) : (
+                    <div className="flex justify-center items-center h-64">
+                        <Loader2 className="h-8 w-8 animate-spin" />
+                    </div>
+                )}
             </div>
         </div>
     );
