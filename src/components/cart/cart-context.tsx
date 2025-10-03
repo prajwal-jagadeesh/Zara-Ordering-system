@@ -146,10 +146,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
             updatedOrders[existingOrderIndex] = {
                 ...existingOrder,
                 pendingItems: newPendingItems,
-                // Only set status to pending if it's not already confirmed.
-                // This keeps confirmed orders on the KDS screen.
                 status: existingOrder.status === 'confirmed' ? 'confirmed' : 'pending',
-                orderTime: new Date(), // Update order time to show it's recent
+                orderTime: new Date(),
             };
 
             return updatedOrders;
@@ -169,6 +167,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     });
     
     setCartItems([]);
+    setIsCartOpen(false);
   };
 
   const clearCart = () => {
@@ -176,15 +175,22 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   };
   
   const getItemQuantity = (itemId: number) => {
+    const cartItem = cartItems.find(i => i.id === itemId);
+    if (cartItem) {
+        return cartItem.quantity;
+    }
+
     if(!tableNumber) return 0;
     
     const order = orders.find(o => o.tableId === tableNumber);
+    if (!order) return 0;
     
-    const pendingItem = (order?.pendingItems || []).find(i => i.id === itemId);
-    const confirmedItem = (order?.confirmedItems || []).find(i => i.id === itemId);
-    const cartItem = cartItems.find(i => i.id === itemId);
+    const pendingItem = (order.pendingItems || []).find(i => i.id === itemId);
+    const confirmedItem = (order.confirmedItems || []).find(i => i.id === itemId);
+    const readyItem = (order.readyItems || []).find(i => i.id === itemId);
+    const servedItem = (order.servedItems || []).find(i => i.id === itemId);
 
-    return (pendingItem?.quantity || 0) + (confirmedItem?.quantity || 0) + (cartItem?.quantity || 0);
+    return (pendingItem?.quantity || 0) + (confirmedItem?.quantity || 0) + (readyItem?.quantity || 0) + (servedItem?.quantity || 0);
   };
 
 
@@ -199,7 +205,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const confirmOrder = (tableId: string) => {
     setOrders(prev => prev.map(o => {
       if (o.tableId === tableId) {
-        // Deep copy to prevent mutation issues
         const newConfirmedItems = JSON.parse(JSON.stringify(o.confirmedItems || []));
         const itemsToConfirm = o.pendingItems || [];
 
