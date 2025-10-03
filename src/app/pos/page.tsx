@@ -3,16 +3,18 @@
 import React, { useState } from 'react';
 import { useCart } from '@/components/cart/cart-context';
 import { Button } from '@/components/ui/button';
-import { Card, CardTitle, CardHeader } from '@/components/ui/card';
+import { Card, CardTitle, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from '@/components/ui/switch';
-import { PlusCircle, Trash2, Edit, MoreVertical } from 'lucide-react';
+import { PlusCircle, Trash2, Edit, MoreVertical, Users, CreditCard } from 'lucide-react';
 import PosHeader from './_components/pos-header';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { MenuItem } from '@/lib/types';
 import { MenuItemForm } from './_components/menu-item-form';
 import { DeleteConfirmationDialog } from './_components/delete-confirmation-dialog';
+import { cn } from '@/lib/utils';
+
 
 const MenuItemRow = ({ item, onEdit, onDelete }: { item: MenuItem, onEdit: () => void, onDelete: () => void }) => {
     const { toggleMenuItemAvailability } = useCart();
@@ -130,7 +132,8 @@ const MenuManagementTab = () => {
 };
 
 const TableManagementTab = () => {
-    const { tables, addTable, removeTable } = useCart();
+    const { tables, addTable, removeTable, orders } = useCart();
+    
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -138,27 +141,64 @@ const TableManagementTab = () => {
                 <Button onClick={addTable}><PlusCircle className="mr-2 h-4 w-4" /> Add Table</Button>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {tables.map(table => (
-                    <Card key={table.id}>
-                        <CardHeader className="flex flex-row items-center justify-between p-4">
-                            <CardTitle>Table {table.id}</CardTitle>
-                             <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant="ghost" className="h-8 w-8 p-0">
-                                        <span className="sr-only">Open menu</span>
-                                        <MoreVertical className="h-4 w-4" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                    <DropdownMenuItem onClick={() => removeTable(table.id)} className="text-destructive">
-                                        <Trash2 className="mr-2 h-4 w-4" />
-                                        <span>Remove</span>
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        </CardHeader>
-                    </Card>
-                ))}
+                {tables.map(table => {
+                    const order = orders.find(o => o.tableId === table.id);
+                    const isOccupied = !!order;
+                    const totalItems = isOccupied ? [
+                        ...(order.pendingItems || []),
+                        ...(order.confirmedItems || []),
+                        ...(order.readyItems || []),
+                        ...(order.servedItems || [])
+                    ].reduce((acc, item) => acc + item.quantity, 0) : 0;
+                    const totalPrice = isOccupied ? [
+                        ...(order.pendingItems || []),
+                        ...(order.confirmedItems || []),
+                        ...(order.readyItems || []),
+                        ...(order.servedItems || [])
+                    ].reduce((acc, item) => acc + item.price * item.quantity, 0) : 0;
+
+                    return (
+                        <Card key={table.id} className={cn("flex flex-col", isOccupied && "bg-primary/10 border-primary/50")}>
+                            <CardHeader className="flex flex-row items-center justify-between p-4">
+                                <CardTitle className="text-lg">Table {table.id}</CardTitle>
+                                 <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" className="h-8 w-8 p-0">
+                                            <span className="sr-only">Open menu</span>
+                                            <MoreVertical className="h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem onClick={() => removeTable(table.id)} className="text-destructive">
+                                            <Trash2 className="mr-2 h-4 w-4" />
+                                            <span>Remove</span>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </CardHeader>
+                            <CardContent className="p-4 pt-0 flex-grow">
+                                {isOccupied ? (
+                                    <div className="flex items-center gap-2">
+                                        <Users className="h-5 w-5 text-primary" />
+                                        <span className="font-semibold text-primary">Occupied</span>
+                                    </div>
+                                ) : (
+                                    <span className="font-semibold text-muted-foreground">Available</span>
+                                )}
+                            </CardContent>
+                            <CardFooter className="p-4 pt-0 text-xs text-muted-foreground mt-auto">
+                               {isOccupied ? (
+                                    <div className="w-full">
+                                        <p>{totalItems} items</p>
+                                        <p className="font-bold text-sm text-foreground">₹{totalPrice.toFixed(2)}</p>
+                                    </div>
+                                ) : (
+                                    <p>&nbsp;</p> 
+                                )}
+                            </CardFooter>
+                        </Card>
+                    )
+                })}
             </div>
         </div>
     );
