@@ -60,10 +60,6 @@ export function CartSheet() {
     setTimeout(() => {
       placeOrder();
       setIsPlacingOrder(false);
-      toast({
-        title: 'Items Added!',
-        description: 'Your new items have been sent to the kitchen for confirmation.',
-      });
     }, 1000);
   }
 
