@@ -169,7 +169,7 @@ const TableManagementTab = () => {
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
-                                            <DropdownMenuItem onClick={() => removeTable(table.id)} className="text-destructive">
+                                            <DropdownMenuItem onClick={() => removeTable(table.id)} disabled={isOccupied} className="text-destructive">
                                                 <Trash2 className="mr-2 h-4 w-4" />
                                                 <span>Remove</span>
                                             </DropdownMenuItem>
