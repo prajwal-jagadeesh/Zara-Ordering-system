@@ -11,9 +11,10 @@ import { useCart } from '@/components/cart/cart-context';
 
 interface MenuDisplayProps {
   menuItems: MenuItem[];
+  isOrderingDisabled: boolean;
 }
 
-export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
+export default function MenuDisplay({ menuItems, isOrderingDisabled }: MenuDisplayProps) {
   const { categories } = useCart();
   
   const itemsByCategory = menuItems.reduce((acc, item) => {
@@ -112,7 +113,7 @@ export default function MenuDisplay({ menuItems }: MenuDisplayProps) {
                   <h2 className="font-bold text-2xl my-6">{category}</h2>
                   <div className="flex flex-col gap-6">
                       {itemsByCategory[category].map(item => (
-                          <MenuItemCard key={item.id} item={item} />
+                          <MenuItemCard key={item.id} item={item} isOrderingDisabled={isOrderingDisabled} />
                       ))}
                   </div>
               </div>

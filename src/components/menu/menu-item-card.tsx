@@ -8,9 +8,10 @@ import { Minus, Plus } from 'lucide-react';
 
 interface MenuItemCardProps {
   item: MenuItem;
+  isOrderingDisabled: boolean;
 }
 
-export function MenuItemCard({ item }: MenuItemCardProps) {
+export function MenuItemCard({ item, isOrderingDisabled }: MenuItemCardProps) {
   const { cartItems, addToCart, updateQuantity, getItemQuantity } = useCart();
   
   const totalQuantity = getItemQuantity(item.id);
@@ -18,10 +19,12 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
   const quantityInCart = cartItem?.quantity || 0;
 
   const handleUpdateQuantity = (newQuantity: number) => {
+    if (isOrderingDisabled) return;
     updateQuantity(item.id, newQuantity);
   };
   
   const handleAddToCart = () => {
+    if (isOrderingDisabled) return;
     addToCart(item);
   }
 
@@ -40,6 +43,7 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
               size="icon"
               className="h-8 w-8 rounded-full bg-card"
               onClick={() => handleUpdateQuantity(quantityInCart - 1)}
+              disabled={isOrderingDisabled}
             >
               <Minus className="h-4 w-4" />
             </Button>
@@ -49,6 +53,7 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
               size="icon"
               className="h-8 w-8 rounded-full bg-card"
               onClick={() => handleUpdateQuantity(quantityInCart + 1)}
+              disabled={isOrderingDisabled}
             >
               <Plus className="h-4 w-4" />
             </Button>
@@ -58,6 +63,7 @@ export function MenuItemCard({ item }: MenuItemCardProps) {
             variant="outline"
             className="rounded-md px-6"
             onClick={handleAddToCart}
+            disabled={isOrderingDisabled}
           >
             {totalQuantity > 0 ? `ADD MORE` : 'ADD'}
             {totalQuantity > 0 && <span className="ml-2 bg-primary text-primary-foreground rounded-full h-5 w-5 text-xs flex items-center justify-center">{totalQuantity}</span>}
