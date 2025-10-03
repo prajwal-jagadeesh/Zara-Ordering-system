@@ -141,9 +141,11 @@ const OrderCard = ({ order }: {order: Order}) => {
                     </>
                 )}
                 {isFullyServed && !hasPendingItems && (
-                    <Button size="sm" onClick={() => closeOrder(order.tableId)} className="w-full">
-                        <CreditCard className="mr-2 h-4 w-4" /> Payment Received
-                    </Button>
+                     <Link href={`/bill?tableId=${order.tableId}`} target="_blank" className="w-full">
+                        <Button size="sm" className="w-full">
+                            <CreditCard className="mr-2 h-4 w-4" /> Payment Received
+                        </Button>
+                    </Link>
                 )}
             </CardFooter>
         </Card>
