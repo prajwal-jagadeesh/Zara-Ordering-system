@@ -141,11 +141,9 @@ const OrderCard = ({ order }: {order: Order}) => {
                     </>
                 )}
                 {isFullyServed && !hasPendingItems && (
-                    <Link href={`/bill?tableId=${order.tableId}`} target="_blank" className="w-full">
-                        <Button size="sm" className="w-full">
-                            <CreditCard className="mr-2 h-4 w-4" /> Payment Received
-                        </Button>
-                    </Link>
+                    <Button size="sm" className="w-full" onClick={() => closeOrder(order.tableId)}>
+                        <CreditCard className="mr-2 h-4 w-4" /> Payment Received
+                    </Button>
                 )}
             </CardFooter>
         </Card>
@@ -237,3 +235,5 @@ export default function CaptainPage() {
         </div>
     )
 }
+
+    
