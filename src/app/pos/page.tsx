@@ -3,13 +3,19 @@
 import React from 'react';
 import { useCart } from '@/components/cart/cart-context';
 import { Button } from '@/components/ui/button';
-import { Card, CardTitle } from '@/components/ui/card';
+import { Card, CardTitle, CardHeader } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { PlusCircle, Trash2, Edit } from 'lucide-react';
+import { PlusCircle, Trash2, Edit, MoreVertical } from 'lucide-react';
 import PosHeader from './_components/pos-header';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 const MenuItemRow = ({ item }: { item: any }) => {
     const { toggleMenuItemAvailability } = useCart();
@@ -87,9 +93,24 @@ const TableManagementTab = () => {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 {tables.map(table => (
-                    <Card key={table.id} className="flex flex-col items-center justify-center p-4">
-                        <CardTitle>Table {table.id}</CardTitle>
-                        <Button variant="destructive" size="sm" className="mt-4" onClick={() => removeTable(table.id)}>Remove</Button>
+                    <Card key={table.id}>
+                        <CardHeader className="flex flex-row items-center justify-between p-4">
+                            <CardTitle>Table {table.id}</CardTitle>
+                             <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" className="h-8 w-8 p-0">
+                                        <span className="sr-only">Open menu</span>
+                                        <MoreVertical className="h-4 w-4" />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={() => removeTable(table.id)} className="text-destructive">
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        <span>Remove</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </CardHeader>
                     </Card>
                 ))}
             </div>
