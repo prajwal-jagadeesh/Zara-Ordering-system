@@ -7,7 +7,7 @@ import { Card, CardTitle, CardHeader, CardContent, CardFooter } from '@/componen
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from '@/components/ui/switch';
-import { PlusCircle, Trash2, Edit, MoreVertical, Users, CreditCard } from 'lucide-react';
+import { PlusCircle, Trash2, Edit, MoreVertical, Users, CreditCard, UtensilsCrossed, Table as TableIcon } from 'lucide-react';
 import PosHeader from './_components/pos-header';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { MenuItem } from '@/lib/types';
@@ -140,65 +140,65 @@ const TableManagementTab = () => {
                 <h2 className="text-2xl font-bold">Tables</h2>
                 <Button onClick={addTable}><PlusCircle className="mr-2 h-4 w-4" /> Add Table</Button>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {tables.map(table => {
-                    const order = orders.find(o => o.tableId === table.id);
-                    const isOccupied = !!order;
-                    const totalItems = isOccupied ? [
-                        ...(order.pendingItems || []),
-                        ...(order.confirmedItems || []),
-                        ...(order.readyItems || []),
-                        ...(order.servedItems || [])
-                    ].reduce((acc, item) => acc + item.quantity, 0) : 0;
-                    const totalPrice = isOccupied ? [
-                        ...(order.pendingItems || []),
-                        ...(order.confirmedItems || []),
-                        ...(order.readyItems || []),
-                        ...(order.servedItems || [])
-                    ].reduce((acc, item) => acc + item.price * item.quantity, 0) : 0;
+             <div className="bg-slate-50 p-4 rounded-lg" style={{backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d1d5db' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")`}}>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                    {tables.map(table => {
+                        const order = orders.find(o => o.tableId === table.id);
+                        const isOccupied = !!order;
+                        const totalItems = isOccupied ? [
+                            ...(order.pendingItems || []),
+                            ...(order.confirmedItems || []),
+                            ...(order.readyItems || []),
+                            ...(order.servedItems || [])
+                        ].reduce((acc, item) => acc + item.quantity, 0) : 0;
+                        const totalPrice = isOccupied ? [
+                            ...(order.pendingItems || []),
+                            ...(order.confirmedItems || []),
+                            ...(order.readyItems || []),
+                            ...(order.servedItems || [])
+                        ].reduce((acc, item) => acc + item.price * item.quantity, 0) : 0;
 
-                    return (
-                        <Card key={table.id} className={cn("flex flex-col", isOccupied && "bg-primary/10 border-primary/50")}>
-                            <CardHeader className="flex flex-row items-center justify-between p-4">
-                                <CardTitle className="text-lg">Table {table.id}</CardTitle>
-                                 <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" className="h-8 w-8 p-0">
-                                            <span className="sr-only">Open menu</span>
-                                            <MoreVertical className="h-4 w-4" />
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                        <DropdownMenuItem onClick={() => removeTable(table.id)} className="text-destructive">
-                                            <Trash2 className="mr-2 h-4 w-4" />
-                                            <span>Remove</span>
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            </CardHeader>
-                            <CardContent className="p-4 pt-0 flex-grow">
-                                {isOccupied ? (
-                                    <div className="flex items-center gap-2">
-                                        <Users className="h-5 w-5 text-primary" />
-                                        <span className="font-semibold text-primary">Occupied</span>
-                                    </div>
-                                ) : (
-                                    <span className="font-semibold text-muted-foreground">Available</span>
-                                )}
-                            </CardContent>
-                            <CardFooter className="p-4 pt-0 text-xs text-muted-foreground mt-auto">
-                               {isOccupied ? (
-                                    <div className="w-full">
-                                        <p>{totalItems} items</p>
-                                        <p className="font-bold text-sm text-foreground">₹{totalPrice.toFixed(2)}</p>
-                                    </div>
-                                ) : (
-                                    <p>&nbsp;</p> 
-                                )}
-                            </CardFooter>
-                        </Card>
-                    )
-                })}
+                        return (
+                            <Card key={table.id} className={cn("flex flex-col rounded-lg overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105", isOccupied ? "bg-white" : "bg-white/80 backdrop-blur-sm")}>
+                                <CardHeader className={cn("flex flex-row items-center justify-between p-3", isOccupied ? "bg-accent text-accent-foreground" : "bg-slate-200")}>
+                                    <CardTitle className="text-base font-bold">TABLE {table.id}</CardTitle>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="h-6 w-6 p-0 hover:bg-black/10">
+                                                <MoreVertical className="h-4 w-4" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuItem onClick={() => removeTable(table.id)} className="text-destructive">
+                                                <Trash2 className="mr-2 h-4 w-4" />
+                                                <span>Remove</span>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </CardHeader>
+                                <CardContent className="p-4 flex-grow flex flex-col justify-between items-center text-center">
+                                    {isOccupied ? (
+                                        <>
+                                            <div>
+                                                <p className="text-xs font-semibold text-accent uppercase">Occupied</p>
+                                                <p className="text-2xl font-bold text-slate-800">₹{totalPrice.toFixed(2)}</p>
+                                            </div>
+                                            <div className="flex items-center gap-2 text-sm text-slate-600 mt-2">
+                                                <Users className="h-4 w-4"/> 
+                                                <span>{totalItems} item{totalItems !== 1 && 's'}</span>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div className="flex flex-col items-center gap-2">
+                                            <TableIcon className="h-10 w-10 text-slate-400"/>
+                                            <p className="font-bold text-slate-500">Available</p>
+                                        </div>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        )
+                    })}
+                </div>
             </div>
         </div>
     );
@@ -211,7 +211,7 @@ export default function PosPage() {
         <div className="bg-background min-h-screen">
             <PosHeader />
             <div className="container mx-auto py-8">
-                <Tabs defaultValue="menu">
+                <Tabs defaultValue="tables">
                     <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="menu">Menu Management</TabsTrigger>
                         <TabsTrigger value="tables">Table Management</TabsTrigger>
