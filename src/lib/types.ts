@@ -23,7 +23,10 @@ export interface Order {
   readyItems: CartItem[];
   servedItems: CartItem[];
   status: 'pending' | 'confirmed';
-  orderTime: Date; 
+  orderTime: Date;
+  discountProofUrl?: string;
+  discountApplied?: boolean;
+  discountPercentage?: number;
 }
 
 export interface RestaurantLocation {

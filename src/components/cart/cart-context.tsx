@@ -36,6 +36,8 @@ interface CartContextType {
   updateMenuItem: (item: MenuItem) => void;
   removeMenuItem: (itemId: number) => void;
   setRestaurantLocation: (location: RestaurantLocation) => void;
+  submitDiscountProof: (tableId: string, proofUrl: string) => void;
+  approveDiscount: (tableId: string, percentage: number) => void;
 }
 
 const CartContext = React.createContext<CartContextType | undefined>(undefined);
@@ -322,6 +324,14 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setMenuItems(prev => prev.filter(item => item.id !== itemId));
   };
 
+  const submitDiscountProof = (tableId: string, proofUrl: string) => {
+    setOrders(prev => prev.map(o => o.tableId === tableId ? { ...o, discountProofUrl: proofUrl } : o));
+  };
+
+  const approveDiscount = (tableId: string, percentage: number) => {
+    setOrders(prev => prev.map(o => o.tableId === tableId ? { ...o, discountApplied: true, discountPercentage: percentage } : o));
+  };
+
   const categories = React.useMemo(() => {
     const allCategories: MenuCategory[] = [
       'Appetizers', 'Soulful Soups', 'Pastas & Spaghetti', 
@@ -366,6 +376,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     addMenuItem,
     updateMenuItem,
     removeMenuItem,
+    submitDiscountProof,
+    approveDiscount,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
