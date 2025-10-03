@@ -3,12 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { useCart } from '@/components/cart/cart-context';
 import { Button } from '@/components/ui/button';
-import { Card, CardTitle, CardHeader, CardContent } from '@/components/ui/card';
+import { Card, CardTitle, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Switch } from '@/components/ui/switch';
-import { PlusCircle, Trash2, Edit, MoreVertical, Utensils, Loader2, LayoutDashboard, List, Settings, MapPin } from 'lucide-react';
+import { PlusCircle, Trash2, Edit, MoreVertical, Utensils, Loader2, LayoutDashboard, List, Settings, MapPin, ExternalLink, Percent } from 'lucide-react';
 import PosHeader from './_components/pos-header';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { MenuItem, RestaurantLocation } from '@/lib/types';
@@ -153,7 +153,21 @@ const MenuManagementTab = () => {
 };
 
 const TableManagementTab = () => {
-    const { tables, addTable, removeTable, orders } = useCart();
+    const { tables, addTable, removeTable, orders, approveDiscount } = useCart();
+    const { toast } = useToast();
+    
+    const handleApproveDiscount = (tableId: string) => {
+        const percentageString = window.prompt("Enter discount percentage:");
+        if (percentageString) {
+            const percentage = parseFloat(percentageString);
+            if (!isNaN(percentage) && percentage > 0 && percentage <= 100) {
+                approveDiscount(tableId, percentage);
+                toast({ title: "Discount Approved!", description: `A ${percentage}% discount has been applied to table ${tableId}.` });
+            } else {
+                toast({ variant: "destructive", title: "Invalid Percentage", description: "Please enter a number between 1 and 100." });
+            }
+        }
+    };
     
     return (
         <div className="space-y-6">
@@ -200,13 +214,30 @@ const TableManagementTab = () => {
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </CardHeader>
-                                <CardContent className="p-4 pt-0">
+                                <CardContent className="p-4 pt-0 space-y-2">
                                     {isOccupied ? (
-                                        <div className='text-center'>
-                                            <p className="font-bold text-accent">OCCUPIED</p>
-                                            <p className="text-2xl font-bold">₹{totalPrice.toFixed(2)}</p>
-                                            <p className="text-sm text-muted-foreground">{totalItems} item{totalItems !== 1 && 's'}</p>
-                                        </div>
+                                        <>
+                                            <div className='text-center'>
+                                                <p className="font-bold text-accent">OCCUPIED</p>
+                                                <p className="text-2xl font-bold">₹{totalPrice.toFixed(2)}</p>
+                                                <p className="text-sm text-muted-foreground">{totalItems} item{totalItems !== 1 && 's'}</p>
+                                            </div>
+                                            {order.discountProofUrl && (
+                                                <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 space-y-2 text-xs">
+                                                     <h4 className="font-semibold flex items-center gap-1"><Percent className="h-4 w-4 text-blue-600"/> Discount Claim</h4>
+                                                     <a href={order.discountProofUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline truncate flex items-center gap-1">
+                                                        View Proof <ExternalLink className="h-3 w-3" />
+                                                    </a>
+                                                    {order.discountApplied ? (
+                                                        <p className="font-semibold text-green-600">Approved ({order.discountPercentage}%)</p>
+                                                    ) : (
+                                                        <Button size="sm" className="w-full h-8" onClick={() => handleApproveDiscount(table.id)}>
+                                                            Approve
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </>
                                     ) : (
                                         <div className="text-center">
                                              <p className="font-bold text-primary">AVAILABLE</p>
@@ -214,6 +245,11 @@ const TableManagementTab = () => {
                                         </div>
                                     )}
                                 </CardContent>
+                                {isOccupied && order.discountApplied && (
+                                    <CardFooter className="p-2 bg-green-100 text-green-700 text-xs font-bold text-center justify-center">
+                                        Discount Applied!
+                                    </CardFooter>
+                                )}
                             </Card>
                         )
                     })}
@@ -319,6 +355,17 @@ export default function PosPage() {
         setIsClient(true);
     }, []);
 
+    if (!isClient) {
+        return (
+             <div className="bg-background min-h-screen">
+                <PosHeader />
+                <div className="flex flex-1 justify-center items-center h-[calc(100vh-4rem)]">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="bg-background min-h-screen">
             <PosHeader />
@@ -351,17 +398,13 @@ export default function PosPage() {
                     </Button>
                 </aside>
                 <main className="flex-1 p-8">
-                     {isClient ? (
+                     
                         <>
                           {activeView === 'tables' && <TableManagementTab />}
                           {activeView === 'menu' && <MenuManagementTab />}
                           {activeView === 'settings' && <SettingsManagementTab />}
                         </>
-                    ) : (
-                        <div className="flex justify-center items-center h-64">
-                            <Loader2 className="h-8 w-8 animate-spin" />
-                        </div>
-                    )}
+                    
                 </main>
             </div>
         </div>
