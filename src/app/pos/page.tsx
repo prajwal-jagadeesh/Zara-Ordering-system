@@ -78,22 +78,26 @@ const MenuManagementTab = () => {
                     <PlusCircle className="mr-2 h-4 w-4" /> Add New Item
                 </Button>
             </div>
-            
-            {categoriesInUse.map(category => (
-                <div key={category}>
-                    <h3 className="text-xl font-semibold mb-4">{category}</h3>
-                    <div className="border rounded-lg">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Name</TableHead>
-                                    <TableHead>Price</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Availability</TableHead>
-                                    <TableHead className="text-right">Actions</TableHead>
+
+            <div className="border rounded-lg">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Price</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Availability</TableHead>
+                            <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {categoriesInUse.map(category => (
+                            <React.Fragment key={category}>
+                                <TableRow className="bg-muted/50 hover:bg-muted/50">
+                                    <TableCell colSpan={5} className="font-bold text-lg py-3">
+                                        {category}
+                                    </TableCell>
                                 </TableRow>
-                            </TableHeader>
-                            <TableBody>
                                 {menuItems.filter(item => item.category === category).map(item => (
                                     <MenuItemRow 
                                         key={item.id} 
@@ -102,11 +106,11 @@ const MenuManagementTab = () => {
                                         onDelete={() => handleOpenDeleteAlert(item)}
                                     />
                                 ))}
-                            </TableBody>
-                        </Table>
-                    </div>
-                </div>
-            ))}
+                            </React.Fragment>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
             
             <MenuItemForm 
                 isOpen={isFormOpen} 
