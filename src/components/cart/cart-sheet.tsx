@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { useCart } from './cart-context';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Minus, Plus, Loader2, ChefHat, Bell } from 'lucide-react';
+import { Minus, Plus, Loader2, ChefHat, Bell, CookingPot, CheckCircle2 } from 'lucide-react';
 import React from 'react';
 import type { CartItem } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
@@ -60,80 +60,115 @@ export function CartSheet() {
     setTimeout(() => {
       placeOrder();
       setIsPlacingOrder(false);
+      toast({
+        title: 'Items Added!',
+        description: 'Your new items have been sent to the kitchen for confirmation.',
+      });
     }, 1000);
   }
 
   const currentOrder = orders.find(o => o.tableId === tableNumber);
   const pendingItems = currentOrder?.pendingItems || [];
   const confirmedItems = currentOrder?.confirmedItems || [];
+  const readyItems = currentOrder?.readyItems || [];
+  const servedItems = currentOrder?.servedItems || [];
+
+  const allOrderedItems = [
+      ...pendingItems,
+      ...confirmedItems,
+      ...readyItems,
+      ...servedItems,
+  ];
 
   const totalCartPrice = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const totalPendingPrice = pendingItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const totalConfirmedPrice = confirmedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const combinedPrice = totalCartPrice + totalPendingPrice + totalConfirmedPrice;
-
+  const totalOrderPrice = allOrderedItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const combinedPrice = totalCartPrice + totalOrderPrice;
 
   return (
     <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
       <SheetContent className="flex w-full flex-col p-0 sm:max-w-lg bg-background text-foreground">
         <SheetHeader className="p-6 pb-2 flex-row justify-between items-center">
           <SheetTitle className="font-bold text-xl">YOUR ORDER</SheetTitle>
-          <Button variant="link" onClick={clearCart} className="text-destructive">Clear New Items</Button>
+          {cartItems.length > 0 && <Button variant="link" onClick={clearCart} className="text-destructive">Clear New Items</Button>}
         </SheetHeader>
         <Separator />
-        {(cartItems.length > 0 || pendingItems.length > 0 || confirmedItems.length > 0) ? (
+        {(cartItems.length > 0 || allOrderedItems.length > 0) ? (
           <>
             <ScrollArea className="flex-1 px-6">
               <div className="flex flex-col gap-6 py-6">
                 
                 {cartItems.length > 0 && (
-                    <>
+                    <div>
                         <h3 className="text-base font-semibold">New Items</h3>
                         {cartItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={false} />)}
-                    </>
+                    </div>
                 )}
                 
-                {(cartItems.length > 0 && (pendingItems.length > 0 || confirmedItems.length > 0)) && <Separator className="my-2" />}
+                {(cartItems.length > 0 && allOrderedItems.length > 0) && <Separator className="my-2" />}
 
                 {pendingItems.length > 0 && (
-                  <>
+                  <div>
                     <h3 className="text-base font-semibold flex items-center gap-2">
                         <Bell size={20} />
                         Waiting for confirmation
                     </h3>
                     {pendingItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={true} />)}
-                  </>
+                  </div>
                 )}
 
-                {(pendingItems.length > 0 && confirmedItems.length > 0) && <Separator className="my-2" />}
+                {((cartItems.length > 0 || pendingItems.length > 0) && confirmedItems.length > 0) && <Separator className="my-2" />}
 
                 {confirmedItems.length > 0 && (
-                  <>
+                  <div>
                     <h3 className="text-base font-semibold flex items-center gap-2">
                         <ChefHat size={20} />
                         In the Kitchen
                     </h3>
                     {confirmedItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={true} />)}
-                  </>
+                  </div>
+                )}
+
+                {((cartItems.length > 0 || pendingItems.length > 0 || confirmedItems.length > 0) && readyItems.length > 0) && <Separator className="my-2" />}
+
+                {readyItems.length > 0 && (
+                    <div>
+                        <h3 className="text-base font-semibold flex items-center gap-2 text-blue-600">
+                            <CookingPot size={20} />
+                            Ready for Pickup
+                        </h3>
+                        {readyItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={true} />)}
+                    </div>
+                )}
+
+                {((cartItems.length > 0 || pendingItems.length > 0 || confirmedItems.length > 0 || readyItems.length > 0) && servedItems.length > 0) && <Separator className="my-2" />}
+
+                {servedItems.length > 0 && (
+                    <div>
+                        <h3 className="text-base font-semibold flex items-center gap-2 text-green-600">
+                            <CheckCircle2 size={20} />
+                            Served
+                        </h3>
+                        {servedItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={true} />)}
+                    </div>
                 )}
               </div>
             </ScrollArea>
             <SheetFooter className="bg-background mt-auto p-6 border-t">
               <div className="w-full space-y-4">
-                 <p className='text-xs text-muted-foreground text-center'>note all prices are inclusive of 5% VAT</p>
+                 <p className='text-xs text-muted-foreground text-center'>Note: All prices are inclusive of 5% VAT</p>
                 <div className="flex justify-between font-bold text-lg">
                   <span>TOTAL</span>
                   <span>₹{combinedPrice.toFixed(2)}</span>
                 </div>
                 <Button size="lg" className="w-full h-12 text-lg" disabled={isPlacingOrder || cartItems.length === 0} onClick={handlePlaceOrder}>
-                  {isPlacingOrder ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : 'Add to Order'}
+                  {isPlacingOrder ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : 'Add More to Order'}
                 </Button>
               </div>
             </SheetFooter>
           </>
         ) : (
           <div className="flex flex-1 flex-col items-center justify-center space-y-4 text-center px-6">
-            <h3 className="font-bold text-2xl">Your cart is empty</h3>
+            <h3 className="font-bold text-2xl">Your order is empty</h3>
             <p className="text-muted-foreground">Add some delicious items from the menu to get started.</p>
             <SheetClose asChild>
                 <Button variant="secondary">Start Ordering</Button>

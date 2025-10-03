@@ -167,7 +167,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     });
     
     setCartItems([]);
-    setIsCartOpen(false);
   };
 
   const clearCart = () => {
@@ -185,12 +184,16 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     const order = orders.find(o => o.tableId === tableNumber);
     if (!order) return 0;
     
-    const pendingItem = (order.pendingItems || []).find(i => i.id === itemId);
-    const confirmedItem = (order.confirmedItems || []).find(i => i.id === itemId);
-    const readyItem = (order.readyItems || []).find(i => i.id === itemId);
-    const servedItem = (order.servedItems || []).find(i => i.id === itemId);
+    const allItems = [
+        ...(order.pendingItems || []),
+        ...(order.confirmedItems || []),
+        ...(order.readyItems || []),
+        ...(order.servedItems || [])
+    ];
 
-    return (pendingItem?.quantity || 0) + (confirmedItem?.quantity || 0) + (readyItem?.quantity || 0) + (servedItem?.quantity || 0);
+    const orderedItem = allItems.find(i => i.id === itemId);
+
+    return (orderedItem?.quantity || 0);
   };
 
 
