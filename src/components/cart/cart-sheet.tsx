@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { useCart } from './cart-context';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Minus, Plus, Loader2, ChefHat, Bell, CookingPot, CheckCircle2 } from 'lucide-react';
+import { Minus, Plus, Loader2, ChefHat, Bell, CheckCircle2 } from 'lucide-react';
 import React from 'react';
 import type { CartItem } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
@@ -73,10 +73,11 @@ export function CartSheet() {
   const readyItems = currentOrder?.readyItems || [];
   const servedItems = currentOrder?.servedItems || [];
 
+  const inKitchenItems = [...confirmedItems, ...readyItems];
+
   const allOrderedItems = [
       ...pendingItems,
-      ...confirmedItems,
-      ...readyItems,
+      ...inKitchenItems,
       ...servedItems,
   ];
 
@@ -116,31 +117,19 @@ export function CartSheet() {
                   </div>
                 )}
 
-                {((cartItems.length > 0 || pendingItems.length > 0) && confirmedItems.length > 0) && <Separator className="my-2" />}
+                {((cartItems.length > 0 || pendingItems.length > 0) && inKitchenItems.length > 0) && <Separator className="my-2" />}
 
-                {confirmedItems.length > 0 && (
+                {inKitchenItems.length > 0 && (
                   <div>
                     <h3 className="text-base font-semibold flex items-center gap-2">
                         <ChefHat size={20} />
                         In the Kitchen
                     </h3>
-                    {confirmedItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={true} />)}
+                    {inKitchenItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={true} />)}
                   </div>
                 )}
 
-                {((cartItems.length > 0 || pendingItems.length > 0 || confirmedItems.length > 0) && readyItems.length > 0) && <Separator className="my-2" />}
-
-                {readyItems.length > 0 && (
-                    <div>
-                        <h3 className="text-base font-semibold flex items-center gap-2 text-blue-600">
-                            <CookingPot size={20} />
-                            Ready for Pickup
-                        </h3>
-                        {readyItems.map(item => <CartItemRow key={item.id} item={item} isOrdered={true} />)}
-                    </div>
-                )}
-
-                {((cartItems.length > 0 || pendingItems.length > 0 || confirmedItems.length > 0 || readyItems.length > 0) && servedItems.length > 0) && <Separator className="my-2" />}
+                {((cartItems.length > 0 || pendingItems.length > 0 || inKitchenItems.length > 0) && servedItems.length > 0) && <Separator className="my-2" />}
 
                 {servedItems.length > 0 && (
                     <div>
