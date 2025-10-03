@@ -3,48 +3,41 @@
 import React from 'react';
 import { useCart } from '@/components/cart/cart-context';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { PlusCircle, Trash2, Edit } from 'lucide-react';
 import PosHeader from './_components/pos-header';
 
-const MenuItemCard = ({ item }: { item: any }) => {
+const MenuItemRow = ({ item }: { item: any }) => {
     const { toggleMenuItemAvailability } = useCart();
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="text-base flex justify-between items-center">
-                    {item.name}
-                    <Badge variant={item.isAvailable === false ? 'destructive' : 'default'}>
-                        {item.isAvailable === false ? 'Unavailable' : 'Available'}
-                    </Badge>
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p className="text-sm text-muted-foreground line-clamp-2">{item.description}</p>
-                <p className="font-bold mt-2">₹{item.price.toFixed(2)}</p>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-                 <div className="flex items-center space-x-2">
-                    <Switch
-                        id={`availability-${item.id}`}
-                        checked={item.isAvailable !== false}
-                        onCheckedChange={() => toggleMenuItemAvailability(item.id)}
-                    />
-                    <Label htmlFor={`availability-${item.id}`}>{item.isAvailable === false ? 'Make Available' : 'Make Unavailable'}</Label>
-                 </div>
-                 <div className="flex gap-2">
-                    <Button variant="ghost" size="icon" disabled>
-                        <Edit className="h-4 w-4" />
-                    </Button>
-                     <Button variant="ghost" size="icon" disabled>
-                        <Trash2 className="h-4 w-4" />
-                    </Button>
-                 </div>
-            </CardFooter>
-        </Card>
+        <TableRow>
+            <TableCell className="font-medium">{item.name}</TableCell>
+            <TableCell>₹{item.price.toFixed(2)}</TableCell>
+            <TableCell>
+                <Badge variant={item.isAvailable === false ? 'destructive' : 'default'}>
+                    {item.isAvailable === false ? 'Unavailable' : 'Available'}
+                </Badge>
+            </TableCell>
+            <TableCell>
+                <Switch
+                    checked={item.isAvailable !== false}
+                    onCheckedChange={() => toggleMenuItemAvailability(item.id)}
+                    aria-label={`Toggle availability for ${item.name}`}
+                />
+            </TableCell>
+            <TableCell className="text-right">
+                <Button variant="ghost" size="icon" disabled>
+                    <Edit className="h-4 w-4" />
+                </Button>
+                <Button variant="ghost" size="icon" disabled>
+                    <Trash2 className="h-4 w-4" />
+                </Button>
+            </TableCell>
+        </TableRow>
     );
 };
 
@@ -60,10 +53,23 @@ const MenuManagementTab = () => {
             {categories.map(category => (
                 <div key={category}>
                     <h3 className="text-xl font-semibold mb-4">{category}</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {menuItems.filter(item => item.category === category).map(item => (
-                            <MenuItemCard key={item.id} item={item} />
-                        ))}
+                    <div className="border rounded-lg">
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Name</TableHead>
+                                    <TableHead>Price</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead>Availability</TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {menuItems.filter(item => item.category === category).map(item => (
+                                    <MenuItemRow key={item.id} item={item} />
+                                ))}
+                            </TableBody>
+                        </Table>
                     </div>
                 </div>
             ))}
