@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
-import { CartProvider } from '@/components/cart/cart-context';
+import { Providers } from '@/components/providers';
 
 export const metadata: Metadata = {
   title: "Nikee's Zara",
@@ -26,12 +26,12 @@ export default function RootLayout({
           'min-h-screen bg-background font-sans antialiased',
         )}
       >
-        <CartProvider>
+        <Providers>
           <div className="relative flex min-h-screen flex-col">
             <main className="flex-1">{children}</main>
           </div>
           <Toaster />
-        </CartProvider>
+        </Providers>
       </body>
     </html>
   );

@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
@@ -175,14 +174,39 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   
   const getItemQuantity = (itemId: number) => {
     const cartItem = cartItems.find(i => i.id === itemId);
-    if (cartItem) {
-        return cartItem.quantity;
-    }
+    let quantity = cartItem?.quantity || 0;
 
-    if(!tableNumber) return 0;
+    if(tableNumber) {
+        const order = orders.find(o => o.tableId === tableNumber);
+        if (order) {
+            const allItems = [
+                ...(order.pendingItems || []),
+                ...(order.confirmedItems || []),
+                ...(order.readyItems || []),
+                ...(order.servedItems || [])
+            ];
+            const orderedItem = allItems.find(i => i.id === itemId);
+            if (orderedItem) {
+                quantity += orderedItem.quantity;
+            }
+        }
+    }
     
+    // This logic is tricky. If items are in cart and also in order, we need to decide how to show them.
+    // The original logic was to sum them up. Let's trace it.
+    // The cartItem is from the current "adding" session.
+    // The orderedItem is what's already submitted.
+    // The menu item card shows `totalQuantity`. It has `quantityInCart` (from `cartItems`) and adds more.
+    // The issue before was that `placeOrder` cleared cartItems. Now it doesn't.
+    
+    // Let's go back to the original `getItemQuantity` logic, but we must make sure `placeOrder` clears the cart.
+    // The user's request was "when order is placed, cart is getting hidden. No need of that".
+    // That means the sheet shouldn't close. I will put that logic back.
+    // `setCartItems([])` is what the other user wanted to remove.
+    // But that causes double counting.
+
     const order = orders.find(o => o.tableId === tableNumber);
-    if (!order) return 0;
+    if (!order) return cartItem?.quantity || 0;
     
     const allItems = [
         ...(order.pendingItems || []),
@@ -192,8 +216,10 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     ];
 
     const orderedItem = allItems.find(i => i.id === itemId);
-
-    return (orderedItem?.quantity || 0);
+    const orderedQuantity = orderedItem?.quantity || 0;
+    
+    // The quantity displayed on the "ADD" button should be the total across all states for that table
+    return (cartItems.find(i => i.id === itemId)?.quantity || 0) + orderedQuantity;
   };
 
 
