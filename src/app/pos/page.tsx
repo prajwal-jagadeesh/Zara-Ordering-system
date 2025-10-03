@@ -1,23 +1,20 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useCart } from '@/components/cart/cart-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardTitle, CardHeader } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 import { PlusCircle, Trash2, Edit, MoreVertical } from 'lucide-react';
 import PosHeader from './_components/pos-header';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import type { MenuItem } from '@/lib/types';
+import { MenuItemForm } from './_components/menu-item-form';
+import { DeleteConfirmationDialog } from './_components/delete-confirmation-dialog';
 
-const MenuItemRow = ({ item }: { item: any }) => {
+const MenuItemRow = ({ item, onEdit, onDelete }: { item: MenuItem, onEdit: () => void, onDelete: () => void }) => {
     const { toggleMenuItemAvailability } = useCart();
     return (
         <TableRow>
@@ -36,10 +33,10 @@ const MenuItemRow = ({ item }: { item: any }) => {
                 />
             </TableCell>
             <TableCell className="text-right">
-                <Button variant="ghost" size="icon" disabled>
+                <Button variant="ghost" size="icon" onClick={onEdit}>
                     <Edit className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" disabled>
+                <Button variant="ghost" size="icon" onClick={onDelete}>
                     <Trash2 className="h-4 w-4" />
                 </Button>
             </TableCell>
@@ -48,15 +45,41 @@ const MenuItemRow = ({ item }: { item: any }) => {
 };
 
 const MenuManagementTab = () => {
-    const { menuItems, categories } = useCart();
+    const { menuItems, categories: allCategories, removeMenuItem } = useCart();
+    const [isFormOpen, setIsFormOpen] = useState(false);
+    const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
+    const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
+
+    const handleOpenForm = (item: MenuItem | null) => {
+        setSelectedItem(item);
+        setIsFormOpen(true);
+    };
+
+    const handleOpenDeleteAlert = (item: MenuItem) => {
+        setSelectedItem(item);
+        setIsDeleteAlertOpen(true);
+    };
+    
+    const handleConfirmDelete = () => {
+        if(selectedItem) {
+            removeMenuItem(selectedItem.id);
+        }
+        setIsDeleteAlertOpen(false);
+        setSelectedItem(null);
+    }
+    
+    const categoriesInUse = allCategories.filter(category => menuItems.some(item => item.category === category));
 
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold">Menu Items</h2>
-                <Button disabled><PlusCircle className="mr-2 h-4 w-4" /> Add New Item</Button>
+                <Button onClick={() => handleOpenForm(null)}>
+                    <PlusCircle className="mr-2 h-4 w-4" /> Add New Item
+                </Button>
             </div>
-            {categories.map(category => (
+            
+            {categoriesInUse.map(category => (
                 <div key={category}>
                     <h3 className="text-xl font-semibold mb-4">{category}</h3>
                     <div className="border rounded-lg">
@@ -72,13 +95,32 @@ const MenuManagementTab = () => {
                             </TableHeader>
                             <TableBody>
                                 {menuItems.filter(item => item.category === category).map(item => (
-                                    <MenuItemRow key={item.id} item={item} />
+                                    <MenuItemRow 
+                                        key={item.id} 
+                                        item={item} 
+                                        onEdit={() => handleOpenForm(item)}
+                                        onDelete={() => handleOpenDeleteAlert(item)}
+                                    />
                                 ))}
                             </TableBody>
                         </Table>
                     </div>
                 </div>
             ))}
+            
+            <MenuItemForm 
+                isOpen={isFormOpen} 
+                setIsOpen={setIsFormOpen}
+                item={selectedItem}
+            />
+            
+            <DeleteConfirmationDialog
+                isOpen={isDeleteAlertOpen}
+                setIsOpen={setIsDeleteAlertOpen}
+                onConfirm={handleConfirmDelete}
+                itemName={selectedItem?.name || ''}
+            />
+
         </div>
     );
 };

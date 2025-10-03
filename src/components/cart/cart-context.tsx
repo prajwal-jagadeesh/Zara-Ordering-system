@@ -31,6 +31,9 @@ interface CartContextType {
   toggleMenuItemAvailability: (itemId: number) => void;
   addTable: () => void;
   removeTable: (tableId: string) => void;
+  addMenuItem: (item: Omit<MenuItem, 'id'>) => void;
+  updateMenuItem: (item: MenuItem) => void;
+  removeMenuItem: (itemId: number) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -163,7 +166,6 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         }
     });
     setCartItems([]);
-    // setIsCartOpen(false); // User requested this to be removed.
   };
 
   const clearCart = () => {
@@ -285,6 +287,26 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const removeTable = (tableId: string) => {
     setTables(prev => prev.filter(table => table.id !== tableId));
   };
+  
+  const addMenuItem = (itemData: Omit<MenuItem, 'id'>) => {
+    setMenuItems(prev => {
+        const newId = Math.max(...prev.map(i => i.id), 0) + 1;
+        const newItem: MenuItem = {
+            id: newId,
+            ...itemData,
+            isAvailable: true,
+        }
+        return [...prev, newItem];
+    });
+  };
+
+  const updateMenuItem = (updatedItem: MenuItem) => {
+    setMenuItems(prev => prev.map(item => item.id === updatedItem.id ? { ...item, ...updatedItem } : item));
+  };
+
+  const removeMenuItem = (itemId: number) => {
+    setMenuItems(prev => prev.filter(item => item.id !== itemId));
+  };
 
   const categories = useMemo(() => {
     const allCategories: MenuCategory[] = [
@@ -293,8 +315,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       'sip sesh', 'Sweets Endings', 'Coffee Clasics', 'Platters',
       'Yakisoba', 'Yakimeshi'
     ];
-    return allCategories.filter(category => menuItems.some(item => item.category === category));
-  }, [menuItems]);
+    // Keep all categories available for the POS form
+    return allCategories;
+  }, []);
 
 
   const value = {
@@ -324,6 +347,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     toggleMenuItemAvailability,
     addTable,
     removeTable,
+    addMenuItem,
+    updateMenuItem,
+    removeMenuItem,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
