@@ -1,6 +1,7 @@
+
 'use client';
 
-import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
+import React from 'react';
 import type { CartItem, MenuItem, Order, MenuCategory } from '@/lib/types';
 import { menuData as staticMenuData } from '@/lib/menu-data';
 
@@ -36,7 +37,7 @@ interface CartContextType {
   removeMenuItem: (itemId: number) => void;
 }
 
-const CartContext = createContext<CartContextType | undefined>(undefined);
+const CartContext = React.createContext<CartContextType | undefined>(undefined);
 
 // Helper to get data from localStorage
 const getFromStorage = (key: string, defaultValue: any) => {
@@ -64,15 +65,15 @@ const initialMenuItems = staticMenuData.map(item => ({ ...item, isAvailable: tru
 const defaultTables = Array.from({ length: 15 }, (_, i) => ({ id: (i + 1).toString() }));
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [orders, setOrders] = useState<Order[]>(() => getFromStorage('orders', []).map((o:any) => ({...o, orderTime: new Date(o.orderTime)})) );
-  const [menuItems, setMenuItems] = useState<MenuItem[]>(() => getFromStorage('menuItems', initialMenuItems));
-  const [tables, setTables] = useState<{id: string}[]>(() => getFromStorage('tables', defaultTables));
-  const [isCartAnimating, setIsCartAnimating] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [tableNumber, setTableNumber] = useState<string | null>(null);
+  const [cartItems, setCartItems] = React.useState<CartItem[]>([]);
+  const [orders, setOrders] = React.useState<Order[]>(() => getFromStorage('orders', []).map((o:any) => ({...o, orderTime: new Date(o.orderTime)})) );
+  const [menuItems, setMenuItems] = React.useState<MenuItem[]>(() => getFromStorage('menuItems', initialMenuItems));
+  const [tables, setTables] = React.useState<{id: string}[]>(() => getFromStorage('tables', defaultTables));
+  const [isCartAnimating, setIsCartAnimating] = React.useState(false);
+  const [isCartOpen, setIsCartOpen] = React.useState(false);
+  const [tableNumber, setTableNumber] = React.useState<string | null>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === 'orders' && event.newValue) {
         try {
@@ -97,9 +98,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  useEffect(() => { setInStorage('orders', orders); }, [orders]);
-  useEffect(() => { setInStorage('menuItems', menuItems); }, [menuItems]);
-  useEffect(() => { setInStorage('tables', tables); }, [tables]);
+  React.useEffect(() => { setInStorage('orders', orders); }, [orders]);
+  React.useEffect(() => { setInStorage('menuItems', menuItems); }, [menuItems]);
+  React.useEffect(() => { setInStorage('tables', tables); }, [tables]);
 
 
   const addToCart = (item: MenuItem, quantity: number = 1) => {
@@ -195,8 +196,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
 
-  const totalItems = useMemo(() => cartItems.reduce((sum, item) => sum + item.quantity, 0), [cartItems]);
-  const totalPrice = useMemo(() => cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0), [cartItems]);
+  const totalItems = React.useMemo(() => cartItems.reduce((sum, item) => sum + item.quantity, 0), [cartItems]);
+  const totalPrice = React.useMemo(() => cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0), [cartItems]);
 
   const confirmOrder = (tableId: string) => {
     setOrders(prev => prev.map(o => {
@@ -308,7 +309,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     setMenuItems(prev => prev.filter(item => item.id !== itemId));
   };
 
-  const categories = useMemo(() => {
+  const categories = React.useMemo(() => {
     const allCategories: MenuCategory[] = [
       'Appetizers', 'Soulful Soups', 'Pastas & Spaghetti', 
       'Artisan Breads', 'Signature Curries', 'Heritage Rice Bowls',
@@ -356,9 +357,11 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export const useCart = () => {
-  const context = useContext(CartContext);
+  const context = React.useContext(CartContext);
   if (context === undefined) {
     throw new Error('useCart must be used within a CartProvider');
   }
   return context;
 };
+
+    
